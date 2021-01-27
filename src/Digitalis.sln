@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Digitalis", "Digitalis\Digitalis.csproj", "{8D54E4BE-2666-44EF-A3EB-65AEF2811CF8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Digitalis", "Digitalis\Digitalis.csproj", "{8D54E4BE-2666-44EF-A3EB-65AEF2811CF8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Specs", "Specs\Specs.csproj", "{F7D140B3-4B40-4544-8941-83B67A73F69D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{8D54E4BE-2666-44EF-A3EB-65AEF2811CF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D54E4BE-2666-44EF-A3EB-65AEF2811CF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D54E4BE-2666-44EF-A3EB-65AEF2811CF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7D140B3-4B40-4544-8941-83B67A73F69D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7D140B3-4B40-4544-8941-83B67A73F69D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7D140B3-4B40-4544-8941-83B67A73F69D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7D140B3-4B40-4544-8941-83B67A73F69D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
