@@ -18,16 +18,6 @@ namespace Specs.Controllers
         {
         }
 
-        private class CreateEntryModel
-        {
-            public CreateEntryModel(string[] tags)
-            {
-                Tags = tags;
-            }
-
-            public string[] Tags { get; }
-        }
-
         [Fact]
         public async Task EntryPost_CreatesOneEntry_WithExpectedContent()
         {
