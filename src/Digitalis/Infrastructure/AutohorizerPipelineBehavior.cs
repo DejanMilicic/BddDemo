@@ -22,23 +22,26 @@ namespace Digitalis.Infrastructure
 
         public Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
         {
-            // check if user is authenticated
-            if (_ctx.HttpContext?.User?.Identity == null)
-                throw new AuthenticationException();
-
-            if ((bool)!_ctx.HttpContext?.User.Identity.IsAuthenticated)
-                throw new AuthenticationException();
-
-            // Invoke the authorizers
-            var authorizations = _authorizers
-                .Select(authorizer => authorizer.IsAuthorized(request))
-                .ToArray();
-
-            if (authorizations.Any(x => x == false))
+            if (_authorizers.Any())
             {
-                // throw an error,
-                // this stops the execution of the request
-                throw new UnauthorizedAccessException();
+                // check if user is authenticated
+                if (_ctx.HttpContext?.User?.Identity == null)
+                    throw new AuthenticationException();
+
+                if ((bool)!_ctx.HttpContext?.User.Identity.IsAuthenticated)
+                    throw new AuthenticationException();
+
+                // Invoke the authorizers
+                var authorizations = _authorizers
+                    .Select(authorizer => authorizer.IsAuthorized(request))
+                    .ToArray();
+
+                if (authorizations.Any(x => x == false))
+                {
+                    // throw an error,
+                    // this stops the execution of the request
+                    throw new UnauthorizedAccessException();
+                }
             }
 
             // Invoke the next handler
