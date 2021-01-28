@@ -17,10 +17,18 @@ namespace Digitalis.Features
 
         public class Authorizer : IAuthorizer<Command>
         {
+            private readonly ClaimsIdentity _claimsIdentity;
+
+            public Authorizer(IHttpContextAccessor htx)
+            {
+                _claimsIdentity = htx.HttpContext?.User.Identity as ClaimsIdentity;
+            }
+
             public bool IsAuthorized(Command request)
             {
-                // todo: check claims
-                return false;
+                if (_claimsIdentity == null) return false;
+
+                return _claimsIdentity.HasClaim("CreateNewEntry", "");
             }
         }
 
@@ -38,7 +46,7 @@ namespace Digitalis.Features
 
             public Handler(IAsyncDocumentSession session, IHttpContextAccessor htx)
             {
-                var claimsIdentity = htx.HttpContext.User.Identity as ClaimsIdentity;
+                
                 _session = session;
             }
 

@@ -44,7 +44,8 @@ namespace Specs.Controllers
                 {
                     new Claim(ClaimTypes.NameIdentifier, "12345678-1234-1234-1234-123456789012"),
                     new Claim(ClaimTypes.Name, "TestUser"),
-                    new Claim(ClaimTypes.Email, "test.user@example.com")
+                    new Claim(ClaimTypes.Email, "test.user@example.com"),
+                    new Claim("CreateNewEntry", "")
                 });
 
             var newEntryModel = new CreateEntryModel(new[] { "tag1", "tag2", "tag3" });
