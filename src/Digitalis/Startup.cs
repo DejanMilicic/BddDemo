@@ -1,31 +1,34 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Reflection;
-using System.Security.Authentication;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 using Digitalis.Infrastructure;
 using FluentValidation.AspNetCore;
 using Hellang.Middleware.ProblemDetails;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using NJsonSchema.Generation;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
 using Raven.Client.Documents.Session;
+using System;
+using System.Net.Http;
+using System.Reflection;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Digitalis
 {
+    internal class CustomSchemaNameGenerator : ISchemaNameGenerator
+    {
+        public string Generate(Type type)
+        {
+            return type.FullName.Replace(".", "_");
+        }
+    }
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -41,10 +44,6 @@ namespace Digitalis
             services.AddHealthChecks();
             services.AddControllers()
                 .AddFluentValidation(s => s.RegisterValidatorsFromAssemblyContaining<Startup>());
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Digitalis", Version = "v1" });
-            });
 
             services.AddSingleton<IDocumentStore>(_ =>
             {
@@ -94,6 +93,9 @@ namespace Digitalis
                 });
 
             services.AddProblemDetails(ConfigureProblemDetails);
+
+            //services.AddOpenApiDocument(cfg => { cfg.SchemaNameGenerator = new CustomSchemaNameGenerator(); });
+            services.AddSwaggerDocument(cfg => { cfg.SchemaNameGenerator = new CustomSchemaNameGenerator(); });
         }
 
         private void ConfigureProblemDetails(ProblemDetailsOptions options)
@@ -120,9 +122,43 @@ namespace Digitalis
             if (env.IsDevelopment())
             {
                 //app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Digitalis v1"));
+                //app.UseSwagger();
+                //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Digitalis v1"));
             }
+
+            // Add OpenAPI/Swagger middlewares
+            app.UseOpenApi(); // Serves the registered OpenAPI/Swagger documents by default on `/swagger/{documentName}/swagger.json`
+                              //app.UseSwaggerUi3(); // Serves the Swagger UI 3 web ui to view the OpenAPI/Swagger documents by default on `/swagger`
+                              //app.UseSwaggerUi3(settings =>
+                              //{
+                              //    settings.GeneratorSettings.DefaultPropertyNameHandling = PropertyNameHandling.CamelCase;
+                              //    settings.GeneratorSettings.DefaultUrlTemplate = "{controller=Home}/{action=Index}/{locale?}";
+                              //    settings.GeneratorSettings.IsAspNetCore = true;
+                              //});
+            //app.UseSwaggerUi3();
+            app.UseSwaggerUi3(options =>
+            {
+                options.Path = "/openapi";
+                options.DocumentPath = "/openapi/v1/openapi.json";
+            });
+            app.UseSwaggerUi3(settings =>
+            {
+                settings.DocExpansion = "list";
+                //settings.GeneratorSettings.SchemaType = SchemaType.OpenApi3;
+                //settings.GeneratorSettings.DefaultUrlTemplate = "api/{controller}/{id?}";
+                //settings.GeneratorSettings.GenerateExamples = true;
+                //settings.PostProcess = document =>
+                //{
+                //    document.Info.Title = "Internal API";
+                //    document.Info.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                //};
+            });
+
+            app.UseReDoc(config =>
+            {
+                config.Path = "/redoc";
+                config.DocumentPath = "/swagger/v1/swagger.json";
+            });
 
             app.UseRouting();
 
