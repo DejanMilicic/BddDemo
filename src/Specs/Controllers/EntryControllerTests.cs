@@ -1,20 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Net.Mime;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Digitalis;
+using Digitalis.Features;
 using Digitalis.Models;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.IdentityModel.Tokens;
 using Specs.Infrastructure;
 using Xunit;
 
@@ -39,8 +31,7 @@ namespace Specs.Controllers
         [Fact]
         public async Task EntryPost_CreatesOneEntry_WithExpectedContent()
         {
-            var httpClient = this.CreateAuthenticatedClient(
-                new List<Claim>
+            var httpClient = this.CreateAuthenticatedClient(new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, "12345678-1234-1234-1234-123456789012"),
                     new Claim(ClaimTypes.Name, "TestUser"),
@@ -48,16 +39,10 @@ namespace Specs.Controllers
                     new Claim("CreateNewEntry", "")
                 });
 
-            var newEntryModel = new CreateEntryModel(new[] { "tag1", "tag2", "tag3" });
+            var newEntry = new CreateEntry.Command(new[] { "tag1", "tag2", "tag3" });
 
-            var requestMessage = new HttpRequestMessage
-            {
-                Method = HttpMethod.Post,
-                Content = new StringContent(JsonSerializer.Serialize(newEntryModel), Encoding.UTF8, MediaTypeNames.Application.Json),
-                RequestUri = new Uri(httpClient.BaseAddress + "entry")
-            };
-
-            var result = await httpClient.SendAsync(requestMessage);
+            var result = await httpClient.PostAsync("/entry",
+                Serialize(newEntry));
 
             result.StatusCode.Should().Be(200);
 
@@ -71,11 +56,11 @@ namespace Specs.Controllers
             entries.Count.Should().Be(1);
 
             var entry = entries.Single();
-            entry.Tags.Should().BeEquivalentTo(newEntryModel.Tags);
+            entry.Tags.Should().BeEquivalentTo(newEntry.Tags);
         }
 
         [Fact(DisplayName = "Unauthorized user adds entry")]
-        public async void UnauthorizedUserAddsEntry()
+        public async Task UnauthorizedUserAddsEntry()
         {
             var httpClient = this.CreateAuthenticatedClient(
                 new List<Claim>
@@ -85,30 +70,20 @@ namespace Specs.Controllers
                     new Claim(ClaimTypes.Email, "test.user@example.com"),
                 });
 
-            var newEntryModel = new CreateEntryModel(new[] { "tag1", "tag2", "tag3" });
+            var result = await httpClient.PostAsync("/entry",
+                Serialize(
+                    new CreateEntry.Command(new[] { "tag1", "tag2", "tag3" })));
 
-            var requestMessage = new HttpRequestMessage
-            {
-                Method = HttpMethod.Post,
-                Content = new StringContent(JsonSerializer.Serialize(newEntryModel), Encoding.UTF8, MediaTypeNames.Application.Json),
-                RequestUri = new Uri(httpClient.BaseAddress + "entry")
-            };
-
-            var result = await httpClient.SendAsync(requestMessage);
 
             result.StatusCode.Should().Be(403);
         }
 
         [Fact(DisplayName = "Unauthenticated user adds entry")]
-        public async void UnauthenticatedUserAddsEntry()
+        public async Task UnauthenticatedUserAddsEntry()
         {
-            var httpClient = this.CreateAnonymousClient();
-
-            var newEntryModel = new CreateEntryModel(new[] { "tag1", "tag2", "tag3" });
-
-            var result = await httpClient.PostAsync("/entry",
-                new StringContent(JsonSerializer.Serialize(newEntryModel), Encoding.UTF8,
-                    MediaTypeNames.Application.Json));
+            var result = await this.CreateAnonymousClient().PostAsync("/entry",
+                Serialize(
+                    new CreateEntry.Command(new[] { "tag1", "tag2", "tag3" })));
 
             result.StatusCode.Should().Be(401);
         }

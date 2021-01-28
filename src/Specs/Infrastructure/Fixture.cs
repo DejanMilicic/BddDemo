@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Mime;
 using System.Security.Claims;
+using System.Text;
 using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Digitalis;
 using Microsoft.AspNetCore.Authentication;
@@ -60,6 +63,14 @@ namespace Specs.Infrastructure
                      services.AddSingleton<IDocumentStore>(Store);
                  });
             }).CreateClient();
+        }
+
+        public StringContent Serialize<T>(T obj)
+        {
+            return new StringContent(
+                JsonSerializer.Serialize(obj),
+                Encoding.UTF8,
+                MediaTypeNames.Application.Json);
         }
     }
 
