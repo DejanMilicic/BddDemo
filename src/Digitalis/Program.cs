@@ -24,6 +24,8 @@ namespace Digitalis
                 {
                     var services = scope.ServiceProvider;
                     var store = services.GetRequiredService<IDocumentStore>();
+                    var expiration = TimeSpan.FromDays(5);
+                    var errorExpiration = TimeSpan.FromDays(10);
 
                     Log.Logger = new LoggerConfiguration()
                         .Enrich.FromLogContext()
@@ -31,7 +33,7 @@ namespace Digitalis
                         .MinimumLevel.Information()
                         .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                         .MinimumLevel.Override("System", LogEventLevel.Warning)
-                        .WriteTo.RavenDB(store)
+                        .WriteTo.RavenDB(store, expiration: expiration, errorExpiration: errorExpiration)
                         .CreateLogger();
                 }
 
