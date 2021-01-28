@@ -149,17 +149,6 @@ namespace Digitalis
                 config.DocumentPath = "/swagger/v1/swagger.json";
             });
 
-            app.UseRouting();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapHealthChecks("/healthcheck");
-                endpoints.MapControllers();
-            });
-
             app.Use(async (ctx, next) =>
             {
                 using (LogContext.Push(
@@ -173,6 +162,17 @@ namespace Digitalis
             });
 
             app.UseSerilogRequestLogging();
+
+            app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapHealthChecks("/healthcheck");
+                endpoints.MapControllers();
+            });
         }
     }
 }
