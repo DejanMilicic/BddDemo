@@ -5,6 +5,7 @@ using System.Security.Claims;
 using Digitalis;
 using Digitalis.Features;
 using Digitalis.Models;
+using FakeItEasy;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Raven.Client.Documents.Session;
@@ -47,6 +48,17 @@ namespace Specs.Features.AddNewEntry
             Store.OpenSession().Query<Entry>().Statistics(out QueryStatistics stats).ToList();
 
             stats.TotalResults.Should().Be(0);
+        }
+
+        [Fact(DisplayName = "3. Email is not sent")]
+        public void EmailNotSent()
+        {
+            A.CallTo(() => Mailer
+                    .SendMail(
+                        A<string>.Ignored,
+                        A<string>.Ignored,
+                        A<string>.Ignored))
+                .MustNotHaveHappened();
         }
     }
 }
