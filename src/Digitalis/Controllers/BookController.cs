@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Bogus;
 using Digitalis.Features;
@@ -10,23 +9,22 @@ using Microsoft.AspNetCore.Mvc;
 using Raven.Client.Documents;
 using Raven.Client.Documents.BulkInsert;
 using Raven.Client.Documents.Operations;
-using Raven.Client.Documents.Session;
 
 namespace Digitalis.Controllers
 {
     [ApiController]
-    public class EntryController : ControllerBase
+    public class BookController : ControllerBase
     {
         private readonly IDocumentStore _store;
         private readonly IMediator _mediator;
 
-        public EntryController(IDocumentStore store, IMediator mediator)
+        public BookController(IDocumentStore store, IMediator mediator)
         {
             _store = store;
             _mediator = mediator;
         }
 
-        [HttpPost("entry/seed")]
+        [HttpPost("book/seed")]
         public async Task<string> Seed()
         {
             DetailedDatabaseStatistics stats = _store.Maintenance.Send(new GetDetailedStatisticsOperation());
@@ -49,7 +47,7 @@ namespace Digitalis.Controllers
             return "Database was empty, new data seeded";
         }
 
-        [HttpPost("entry")]
-        public async Task<string> Post([FromBody] CreateEntry.Command entry) => await _mediator.Send(entry);
+        [HttpPost("book")]
+        public async Task<string> Post([FromBody] CreateBook.Command entry) => await _mediator.Send(entry);
     }
 }
