@@ -12,6 +12,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Digitalis.Infrastructure;
+using FluentValidation.AspNetCore;
 using MediatR;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
@@ -32,7 +33,8 @@ namespace Digitalis
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHealthChecks();
-            services.AddControllers();
+            services.AddControllers()
+                .AddFluentValidation(s => s.RegisterValidatorsFromAssemblyContaining<Startup>());
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Digitalis", Version = "v1" });
@@ -62,6 +64,7 @@ namespace Digitalis
             services.AddScoped<IDocumentSession>(sp => sp.GetService<IDocumentStore>()?.OpenSession());
 
             services.AddMediatR(typeof(Startup));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorPipelineBehavior<,>));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

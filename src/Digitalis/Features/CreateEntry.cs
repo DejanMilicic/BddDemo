@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Digitalis.Models;
+using FluentValidation;
 using MediatR;
 using Raven.Client.Documents.Session;
 
@@ -10,6 +11,14 @@ namespace Digitalis.Features
     public class CreateEntry
     {
         public record Command(string[] Tags) : IRequest<string>;
+
+        public class Validator : AbstractValidator<Command>
+        {
+            public Validator()
+            {
+                RuleFor(x => x.Tags).NotEmpty();
+            }
+        }
 
         public class Handler : IRequestHandler<Command, string>
         {
