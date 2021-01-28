@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
@@ -34,10 +36,19 @@ namespace Specs.Controllers
         public async Task EntryPost_CreatesOneEntry_WithExpectedContent()
         {
             var newEntryModel = new CreateEntryModel(new[] { "tag1", "tag2", "tag3" });
-            var newEntryModelContent = JsonSerializer.Serialize(newEntryModel);
 
-            var stringContent = new StringContent(newEntryModelContent, Encoding.UTF8, MediaTypeNames.Application.Json); // use MediaTypeNames.Application.Json in Core 3.0+ and Standard 2.1+
-            var result = await HttpClient.PostAsync("/entry", stringContent);
+            var requestMessage = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                Content = new StringContent(JsonSerializer.Serialize(newEntryModel), Encoding.UTF8, MediaTypeNames.Application.Json),
+                RequestUri = new Uri(HttpClient.BaseAddress + "entry")
+            };
+
+            // todo : encode claims
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", "Your token");
+
+            var result = await HttpClient.SendAsync(requestMessage);
+
             result.StatusCode.Should().Be(200);
 
             var session = Store.OpenSession();
