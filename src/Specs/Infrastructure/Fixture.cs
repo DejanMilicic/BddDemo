@@ -23,11 +23,14 @@ namespace Specs.Infrastructure
 {
     public class Fixture : RavenTestDriver, IClassFixture<WebApplicationFactory<Startup>>
     {
-        protected readonly HttpClient HttpClient;
+        //protected readonly HttpClient HttpClient;
         protected readonly IDocumentStore Store;
+        protected readonly WebApplicationFactory<Startup> Factory;
 
         public Fixture(WebApplicationFactory<Startup> factory)
         {
+            Factory = factory;
+
             Store = this.GetDocumentStore();
             IndexCreation.CreateIndexes(typeof(Startup).Assembly, Store);
 
@@ -35,13 +38,13 @@ namespace Specs.Infrastructure
             //    .CreateClientWithTestAuth()
             //    ;
 
-            HttpClient = factory.WithWebHostBuilder(builder => builder.ConfigureTestServices(
-                services => services.AddMvc(
-                    options =>
-                    {
-                        options.Filters.Add(new AllowAnonymousFilter());
-                        options.Filters.Add(new FakeUserFilter());
-                    }))).CreateClient();
+            //HttpClient = factory.WithWebHostBuilder(builder => builder.ConfigureTestServices(
+            //    services => services.AddMvc(
+            //        options =>
+            //        {
+            //            options.Filters.Add(new AllowAnonymousFilter());
+            //            options.Filters.Add(new FakeUserFilter());
+            //        }))).CreateClient();
 
 
             //HttpClient = factory.WithWebHostBuilder(builder =>
@@ -72,55 +75,16 @@ namespace Specs.Infrastructure
 
             //HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
         }
-    }
 
-    public static class WebApplicationFactoryExtensions
-    {
-        public static WebApplicationFactory<T> WithAuthentication<T>(this WebApplicationFactory<T> factory) where T : class
+        public HttpClient GetAuthenticatedClient()
         {
-            return factory.WithWebHostBuilder(builder =>
-            {
-                builder.ConfigureTestServices(services =>
-                {
-                    services.AddAuthentication("Test")
-                        .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
-                });
-            });
-        }
-
-        public static HttpClient CreateClientWithTestAuth<T>(this WebApplicationFactory<T> factory) where T : class
-        {
-            var client = factory.WithAuthentication().CreateClient(new WebApplicationFactoryClientOptions
-            {
-                AllowAutoRedirect = false
-            });
-
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
-
-            return client;
-        }
-    }
-
-    public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
-    {
-        public TestAuthHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock) : base(options, logger, encoder, clock)
-        {
-        }
-
-        protected override Task<AuthenticateResult> HandleAuthenticateAsync()
-        {
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.Name, "Test user"),
-                new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString())
-            };
-            var identity = new ClaimsIdentity(claims, "Test");
-            var principal = new ClaimsPrincipal(identity);
-            var ticket = new AuthenticationTicket(principal, "Test");
-
-            var result = AuthenticateResult.Success(ticket);
-
-            return Task.FromResult(result);
+            return this.Factory.WithWebHostBuilder(builder => builder.ConfigureTestServices(
+                services => services.AddMvc(
+                    options =>
+                    {
+                        options.Filters.Add(new AllowAnonymousFilter());
+                        options.Filters.Add(new FakeUserFilter());
+                    }))).CreateClient();
         }
     }
 

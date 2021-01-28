@@ -39,20 +39,22 @@ namespace Specs.Controllers
         [Fact]
         public async Task EntryPost_CreatesOneEntry_WithExpectedContent()
         {
+            var httpClient = this.GetAuthenticatedClient();
+
             var newEntryModel = new CreateEntryModel(new[] { "tag1", "tag2", "tag3" });
 
             var requestMessage = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
                 Content = new StringContent(JsonSerializer.Serialize(newEntryModel), Encoding.UTF8, MediaTypeNames.Application.Json),
-                RequestUri = new Uri(HttpClient.BaseAddress + "entry")
+                RequestUri = new Uri(httpClient.BaseAddress + "entry")
             };
 
 
             string token = MockJwtTokens.GenerateJwtToken(new List<Claim> {new Claim("X", "Y" )});
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var result = await HttpClient.SendAsync(requestMessage);
+            var result = await httpClient.SendAsync(requestMessage);
 
             result.StatusCode.Should().Be(200);
 
