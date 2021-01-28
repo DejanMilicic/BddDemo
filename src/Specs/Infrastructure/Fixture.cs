@@ -40,7 +40,7 @@ namespace Specs.Infrastructure
             {
                  builder.ConfigureTestServices(services =>
                  {
-                     services.AddMvc(
+                     services.AddControllers(
                          options =>
                          {
                              options.Filters.Add(new AllowAnonymousFilter());
