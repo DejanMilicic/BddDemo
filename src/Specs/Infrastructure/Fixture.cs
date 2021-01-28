@@ -23,7 +23,6 @@ namespace Specs.Infrastructure
 {
     public class Fixture : RavenTestDriver, IClassFixture<WebApplicationFactory<Startup>>
     {
-        //protected readonly HttpClient HttpClient;
         protected readonly IDocumentStore Store;
         protected readonly WebApplicationFactory<Startup> Factory;
 
@@ -33,58 +32,24 @@ namespace Specs.Infrastructure
 
             Store = this.GetDocumentStore();
             IndexCreation.CreateIndexes(typeof(Startup).Assembly, Store);
-
-            //HttpClient = factory
-            //    .CreateClientWithTestAuth()
-            //    ;
-
-            //HttpClient = factory.WithWebHostBuilder(builder => builder.ConfigureTestServices(
-            //    services => services.AddMvc(
-            //        options =>
-            //        {
-            //            options.Filters.Add(new AllowAnonymousFilter());
-            //            options.Filters.Add(new FakeUserFilter());
-            //        }))).CreateClient();
-
-
-            //HttpClient = factory.WithWebHostBuilder(builder =>
-            //    {
-            //        builder.ConfigureTestServices(services =>
-            //        {
-            //            services.AddSingleton<IDocumentStore>(Store);
-            //        });
-            //    })
-            //    .CreateDefaultClient();
-
-
-            //HttpClient = factory.WithAuthentication()
-            //builder =>
-            //    {
-            //        builder.ConfigureTestServices(services =>
-            //        {
-            //            services.AddSingleton<IDocumentStore>(Store);
-            //        });
-            //    })
-            //.CreateDefaultClient();
-            //    .CreateClientWithTestAuth();
-
-            //var client = factory.CreateClient(new WebApplicationFactoryClientOptions
-            //{
-            //    AllowAutoRedirect = false
-            //});
-
-            //HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
         }
 
         public HttpClient GetAuthenticatedClient()
         {
-            return this.Factory.WithWebHostBuilder(builder => builder.ConfigureTestServices(
-                services => services.AddMvc(
-                    options =>
-                    {
-                        options.Filters.Add(new AllowAnonymousFilter());
-                        options.Filters.Add(new FakeUserFilter());
-                    }))).CreateClient();
+            return this.Factory.WithWebHostBuilder(builder =>
+            {
+                 builder.ConfigureTestServices(services =>
+                 {
+                     services.AddMvc(
+                         options =>
+                         {
+                             options.Filters.Add(new AllowAnonymousFilter());
+                             options.Filters.Add(new FakeUserFilter());
+                         });
+
+                     services.AddSingleton<IDocumentStore>(Store);
+                 });
+            }).CreateClient();
         }
     }
 
