@@ -127,20 +127,9 @@ namespace Digitalis
             if (env.IsDevelopment())
             {
                 //app.UseDeveloperExceptionPage();
-                //app.UseSwagger();
-                //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Digitalis v1"));
             }
 
-            // Add OpenAPI/Swagger middlewares
-            app.UseOpenApi(); // Serves the registered OpenAPI/Swagger documents by default on `/swagger/{documentName}/swagger.json`
-                              //app.UseSwaggerUi3(); // Serves the Swagger UI 3 web ui to view the OpenAPI/Swagger documents by default on `/swagger`
-                              //app.UseSwaggerUi3(settings =>
-                              //{
-                              //    settings.GeneratorSettings.DefaultPropertyNameHandling = PropertyNameHandling.CamelCase;
-                              //    settings.GeneratorSettings.DefaultUrlTemplate = "{controller=Home}/{action=Index}/{locale?}";
-                              //    settings.GeneratorSettings.IsAspNetCore = true;
-                              //});
-            //app.UseSwaggerUi3();
+            app.UseOpenApi(); 
             app.UseSwaggerUi3(options =>
             {
                 options.Path = "/openapi";
@@ -149,14 +138,7 @@ namespace Digitalis
             app.UseSwaggerUi3(settings =>
             {
                 settings.DocExpansion = "list";
-                //settings.GeneratorSettings.SchemaType = SchemaType.OpenApi3;
-                //settings.GeneratorSettings.DefaultUrlTemplate = "api/{controller}/{id?}";
-                //settings.GeneratorSettings.GenerateExamples = true;
-                //settings.PostProcess = document =>
-                //{
-                //    document.Info.Title = "Internal API";
-                //    document.Info.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-                //};
+
             });
 
             app.UseReDoc(config =>
