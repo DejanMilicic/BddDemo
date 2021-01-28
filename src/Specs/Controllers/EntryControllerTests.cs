@@ -39,7 +39,13 @@ namespace Specs.Controllers
         [Fact]
         public async Task EntryPost_CreatesOneEntry_WithExpectedContent()
         {
-            var httpClient = this.GetAuthenticatedClient();
+            var httpClient = this.CreateAuthenticatedClient(
+                new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, "12345678-1234-1234-1234-123456789012"),
+                    new Claim(ClaimTypes.Name, "TestUser"),
+                    new Claim(ClaimTypes.Email, "test.user@example.com")
+                });
 
             var newEntryModel = new CreateEntryModel(new[] { "tag1", "tag2", "tag3" });
 
@@ -49,10 +55,6 @@ namespace Specs.Controllers
                 Content = new StringContent(JsonSerializer.Serialize(newEntryModel), Encoding.UTF8, MediaTypeNames.Application.Json),
                 RequestUri = new Uri(httpClient.BaseAddress + "entry")
             };
-
-
-            string token = MockJwtTokens.GenerateJwtToken(new List<Claim> {new Claim("X", "Y" )});
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var result = await httpClient.SendAsync(requestMessage);
 
@@ -69,29 +71,6 @@ namespace Specs.Controllers
 
             var entry = entries.Single();
             entry.Tags.Should().BeEquivalentTo(newEntryModel.Tags);
-        }
-    }
-
-    public static class MockJwtTokens
-    {
-        public static string Issuer { get; } = Guid.NewGuid().ToString();
-        public static SecurityKey SecurityKey { get; }
-        public static SigningCredentials SigningCredentials { get; }
-
-        private static readonly JwtSecurityTokenHandler s_tokenHandler = new JwtSecurityTokenHandler();
-        private static readonly RandomNumberGenerator s_rng = RandomNumberGenerator.Create();
-        private static readonly byte[] s_key = new byte[32];
-
-        static MockJwtTokens()
-        {
-            s_rng.GetBytes(s_key);
-            SecurityKey = new SymmetricSecurityKey(s_key) { KeyId = Guid.NewGuid().ToString() };
-            SigningCredentials = new SigningCredentials(SecurityKey, SecurityAlgorithms.HmacSha256);
-        }
-
-        public static string GenerateJwtToken(IEnumerable<Claim> claims)
-        {
-            return s_tokenHandler.WriteToken(new JwtSecurityToken(Issuer, null, claims, null, DateTime.UtcNow.AddMinutes(20), SigningCredentials));
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Specs.Infrastructure
             IndexCreation.CreateIndexes(typeof(Startup).Assembly, Store);
         }
 
-        public HttpClient GetAuthenticatedClient()
+        public HttpClient CreateAuthenticatedClient(IEnumerable<Claim> claims)
         {
             return this.Factory.WithWebHostBuilder(builder =>
             {
@@ -44,7 +44,7 @@ namespace Specs.Infrastructure
                          options =>
                          {
                              options.Filters.Add(new AllowAnonymousFilter());
-                             options.Filters.Add(new FakeUserFilter());
+                             options.Filters.Add(new FakeUserFilter(claims));
                          });
 
                      services.AddSingleton<IDocumentStore>(Store);
@@ -55,19 +55,16 @@ namespace Specs.Infrastructure
 
     public class FakeUserFilter : IAsyncActionFilter
     {
+        private readonly IEnumerable<Claim> _claims;
+
+        public FakeUserFilter(IEnumerable<Claim> claims)
+        {
+            _claims = claims;
+        }
+
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            context.HttpContext.User = new ClaimsPrincipal(
-                new ClaimsIdentity(new List<Claim>
-                {
-                    new Claim(ClaimTypes.NameIdentifier, "12345678-1234-1234-1234-123456789012"),
-                    new Claim(ClaimTypes.Name, "TestUser"),
-                    new Claim(ClaimTypes.Email, "test.user@example.com"), // add as many claims as you need
-                }
-                , "TestAuth"
-                )
-            );
-
+            context.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity(_claims, "TestAuthType"));
             await next();
         }
     }
