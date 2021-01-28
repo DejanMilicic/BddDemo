@@ -1,9 +1,11 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Digitalis.Infrastructure;
 using Digitalis.Models;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Raven.Client.Documents.Session;
 
 namespace Digitalis.Features
@@ -24,8 +26,9 @@ namespace Digitalis.Features
         {
             private readonly IAsyncDocumentSession _session;
 
-            public Handler(IAsyncDocumentSession session)
+            public Handler(IAsyncDocumentSession session, IHttpContextAccessor htx)
             {
+                var accessToken = htx.HttpContext.Request.Headers["Authorization"];
                 _session = session;
             }
 
