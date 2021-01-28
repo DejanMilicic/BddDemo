@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Digitalis.Infrastructure;
@@ -29,6 +30,7 @@ namespace Digitalis.Features
             public Handler(IAsyncDocumentSession session, IHttpContextAccessor htx)
             {
                 var accessToken = htx.HttpContext.Request.Headers["Authorization"];
+                var claimsIdentity = htx.HttpContext.User.Identity as ClaimsIdentity;
                 _session = session;
             }
 
