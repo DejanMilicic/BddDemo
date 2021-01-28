@@ -14,23 +14,38 @@ namespace Digitalis.Infrastructure
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken,
             RequestHandlerDelegate<TResponse> next)
         {
-            var start = Stopwatch.GetTimestamp();
-            var response = await next();
-            var stop = Stopwatch.GetTimestamp();
+            TResponse response = default(TResponse);
 
-            //Log.Information("{MediatR}", Serialize(request, response, GetElapsedMilliseconds(start, stop)));
+            long start = Stopwatch.GetTimestamp();
+            long stop = 0;
+            try
+            {
+                response = await next();
+                stop = Stopwatch.GetTimestamp();
+                return response;
+            }
+            catch
+            {
+                // log exception here
+                throw;
+            }
+            finally
+            {
+                //Log.Information("{MediatR}", Serialize(request, response, GetElapsedMilliseconds(start, stop)));
 
-            var serializedRequest = JsonConvert.SerializeObject(request);
-            var serializedResponse = JsonConvert.SerializeObject(response);
-            var elapsed = $"{GetElapsedMilliseconds(start, stop):0.0000}";
+                var serializedRequest = JsonConvert.SerializeObject(request);
+                var serializedResponse = JsonConvert.SerializeObject(response);
 
-            dynamic actor = JObject.Parse(serializedRequest);
-            string actorEmail = actor.Actor != null ? actor.Actor.Email : "unknown actor";
+                string elapsed = "";
+                if (stop != 0)
+                    elapsed = $"{GetElapsedMilliseconds(start, stop):0.0000}";
 
-            Log.Information("{Actor} {Input} {Output} {Elapsed}", actorEmail, serializedRequest, serializedResponse,
-                elapsed);
+                dynamic actor = JObject.Parse(serializedRequest);
+                string actorEmail = actor.Actor != null ? actor.Actor.Email : "unknown actor";
 
-            return response;
+                Log.Information("{Actor} {Input} {Output} {Elapsed}", actorEmail, serializedRequest, serializedResponse,
+                    elapsed);
+            }
         }
 
         private Dictionary<string, string> Serialize(TRequest request, TResponse result, double elapsedMs)
