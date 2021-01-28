@@ -19,6 +19,7 @@ using System.Reflection;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using Digitalis.Services;
+using Serilog;
 
 namespace Digitalis
 {
@@ -70,6 +71,7 @@ namespace Digitalis
             services.AddScoped<IDocumentSession>(sp => sp.GetService<IDocumentStore>()?.OpenSession());
 
             services.AddMediatR(typeof(Startup));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingPipelineBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizerPipelineBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorPipelineBehavior<,>));
 
@@ -173,6 +175,8 @@ namespace Digitalis
                 endpoints.MapHealthChecks("/healthcheck");
                 endpoints.MapControllers();
             });
+
+            app.UseSerilogRequestLogging();
         }
     }
 }
