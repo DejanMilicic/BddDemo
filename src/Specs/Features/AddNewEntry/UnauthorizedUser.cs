@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Net.Http;
+using System.Security.Claims;
 using Digitalis;
 using Digitalis.Features;
 using Digitalis.Models;
@@ -19,7 +20,7 @@ namespace Specs.Features.AddNewEntry
 
         public UnauthorizedUser(WebApplicationFactory<Startup> factory) : base(factory)
         {
-            var client = this.CreateAnonymousClient();
+            var client = this.CreateAuthenticatedClient(new Claim[] { });
 
             _newEntry = new CreateEntry.Command(new[] { "tag1", "tag2", "tag3" });
 
