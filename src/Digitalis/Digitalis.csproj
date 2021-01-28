@@ -15,5 +15,8 @@
     <PackageReference Include="RavenDB.Client" Version="5.1.3" />
     <PackageReference Include="Scrutor" Version="3.3.0" />
   </ItemGroup>
-
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
 </Project>

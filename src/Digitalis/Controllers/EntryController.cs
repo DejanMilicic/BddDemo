@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Bogus;
 using Digitalis.Features;
@@ -49,6 +50,24 @@ namespace Digitalis.Controllers
             return "Database was empty, new data seeded";
         }
 
+        /// <summary>
+        /// Creates new entry
+        /// </summary>
+        /// <remarks>
+        /// Entries will be expanded in next versions of this API
+        /// </remarks>
+        /// <returns>ID of new entry that was created</returns>
+        /// <param name="entry">Entry with tags</param>
+        /// <response code="200">Entry created</response>
+        /// <response code="401">User is not authenticated</response>
+        /// <response code="403">User is not authorized</response>
+        /// <response code="500">Server error occurred</response>
+        [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(500)]
+        [Produces(typeof(string))]
         [HttpPost("entry")]
         public async Task<string> Post([FromBody] CreateEntry.Command entry) => await _mediator.Send(entry);
     }
