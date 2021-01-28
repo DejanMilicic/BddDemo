@@ -6,6 +6,8 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Digitalis;
+using Digitalis.Services;
+using FakeItEasy;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -21,10 +23,13 @@ namespace Specs.Infrastructure
     {
         protected readonly IDocumentStore Store;
         protected readonly WebApplicationFactory<Startup> Factory;
+        protected readonly IMailer Mailer;
 
         public Fixture(WebApplicationFactory<Startup> factory)
         {
             Factory = factory;
+
+            Mailer = A.Fake<IMailer>();
 
             Store = this.GetDocumentStore();
             IndexCreation.CreateIndexes(typeof(Startup).Assembly, Store);
@@ -43,6 +48,7 @@ namespace Specs.Infrastructure
                          });
 
                      services.AddSingleton<IDocumentStore>(Store);
+                     services.AddTransient<IMailer>(sp => Mailer);
                  });
             }).CreateClient();
         }
@@ -54,6 +60,7 @@ namespace Specs.Infrastructure
                  builder.ConfigureTestServices(services =>
                  {
                      services.AddSingleton<IDocumentStore>(Store);
+                     services.AddTransient<IMailer>(sp => Mailer);
                  });
             }).CreateClient();
         }

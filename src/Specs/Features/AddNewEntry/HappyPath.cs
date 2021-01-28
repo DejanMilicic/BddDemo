@@ -1,11 +1,14 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using Digitalis;
 using Digitalis.Features;
 using Digitalis.Models;
+using FakeItEasy;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 using Specs.Infrastructure;
 using Xunit;
@@ -54,6 +57,53 @@ namespace Specs.Features.AddNewEntry
             var entry = Store.OpenSession().Query<Entry>().Single();
 
             entry.Tags.Should().BeEquivalentTo(_newEntry.Tags);
+        }
+
+        [Fact(DisplayName = "4. One email is sent")]
+        public void OneEmailSent()
+        {
+            A.CallTo(() => Mailer
+                    .SendMail(
+                        A<string>.Ignored, 
+                        A<string>.Ignored, 
+                        A<string>.Ignored))
+                    .MustHaveHappenedOnceExactly();
+        }
+
+        [Fact(DisplayName = "5. Email is addressed to admin")]
+        public void EmailAddressedToAdmin()
+        {
+            A.CallTo(() => Mailer
+                    .SendMail(
+                        A<string>.That.Matches(x => x == "admin@site.com"), 
+                        A<string>.Ignored, 
+                        A<string>.Ignored))
+                    .MustHaveHappenedOnceExactly();
+        }
+
+        [Fact(DisplayName = "6. Email subject is correct")]
+        public void EmailSubjectIsCorrect()
+        {
+            A.CallTo(() => Mailer
+                    .SendMail(
+                        A<string>.Ignored, 
+                        A<string>.That.Matches(x => x == "New entry created"), 
+                        A<string>.Ignored))
+                    .MustHaveHappenedOnceExactly();
+        }
+
+        [Fact(DisplayName = "7. Email body contains all tags")]
+        public void EmailBodyContainsAllTags()
+        {
+            foreach (string tag in _newEntry.Tags)
+            {
+                A.CallTo(() => Mailer
+                        .SendMail(
+                            A<string>.Ignored, 
+                            A<string>.Ignored, 
+                            A<string>.That.Matches(x => _newEntry.Tags.All(x.Contains))))
+                        .MustHaveHappenedOnceExactly();                
+            }
         }
     }
 }
