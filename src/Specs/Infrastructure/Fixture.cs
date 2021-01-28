@@ -43,7 +43,6 @@ namespace Specs.Infrastructure
                      services.AddControllers(
                          options =>
                          {
-                             options.Filters.Add(new AllowAnonymousFilter());
                              options.Filters.Add(new FakeUserFilter(claims));
                          });
 
