@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using Digitalis.Infrastructure;
 using Digitalis.Models;
 using FluentValidation;
 using MediatR;
@@ -13,6 +14,15 @@ namespace Digitalis.Features
     public class CreateEntry
     {
         public record Command(string[] Tags) : IRequest<string>;
+
+        public class Authorizer : IAuthorizer<Command>
+        {
+            public bool IsAuthorized(Command request)
+            {
+                // todo: check claims
+                return false;
+            }
+        }
 
         public class Validator : AbstractValidator<Command>
         {

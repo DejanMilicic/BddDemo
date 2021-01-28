@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Digitalis.Infrastructure;
@@ -66,6 +67,7 @@ namespace Digitalis
             services.AddScoped<IDocumentSession>(sp => sp.GetService<IDocumentStore>()?.OpenSession());
 
             services.AddMediatR(typeof(Startup));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizerPipelineBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorPipelineBehavior<,>));
 
             services.AddAuthorization();
@@ -77,6 +79,16 @@ namespace Digitalis
                         options.AccessDeniedPath = new PathString("/auth/denied");
                     });
 
+            services.Scan(
+                x =>
+                {
+                    var entryAssembly = Assembly.GetAssembly(typeof(Startup));
+
+                    x.FromAssemblies(entryAssembly)
+                        .AddClasses(classes => classes.AssignableTo(typeof(IAuthorizer<>)))
+                        .AsImplementedInterfaces()
+                        .WithScopedLifetime();
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
