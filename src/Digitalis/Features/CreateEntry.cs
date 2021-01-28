@@ -26,8 +26,6 @@ namespace Digitalis.Features
 
             public bool IsAuthorized(Command request)
             {
-                if (_claimsIdentity == null) return false;
-
                 return _claimsIdentity.HasClaim("CreateNewEntry", "");
             }
         }
