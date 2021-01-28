@@ -1,9 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Digitalis.Infrastructure;
 using Digitalis.Models;
+using Digitalis.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -41,11 +43,12 @@ namespace Digitalis.Features
         public class Handler : IRequestHandler<Command, string>
         {
             private readonly IAsyncDocumentSession _session;
+            private readonly IMailer _mailer;
 
-            public Handler(IAsyncDocumentSession session, IHttpContextAccessor htx)
+            public Handler(IAsyncDocumentSession session, IMailer mailer)
             {
-                
                 _session = session;
+                _mailer = mailer;
             }
 
             public async Task<string> Handle(Command command, CancellationToken cancellationToken)
@@ -57,6 +60,8 @@ namespace Digitalis.Features
 
                 await _session.StoreAsync(entry, cancellationToken);
                 await _session.SaveChangesAsync(cancellationToken);
+
+                _mailer.SendMail("admin@site.com", "New entry created", String.Join(", ", entry.Tags));
 
                 return entry.Id;
             }

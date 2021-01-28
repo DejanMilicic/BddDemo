@@ -18,6 +18,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+using Digitalis.Services;
 
 namespace Digitalis
 {
@@ -91,6 +92,8 @@ namespace Digitalis
                         .AsImplementedInterfaces()
                         .WithScopedLifetime();
                 });
+
+            services.AddTransient<IMailer, Mailer>();
 
             services.AddProblemDetails(ConfigureProblemDetails);
 
