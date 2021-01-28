@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Net.Http;
-using System.Security.Claims;
 using Digitalis;
 using Digitalis.Features;
 using Digitalis.Models;
@@ -12,18 +11,15 @@ using Xunit;
 
 namespace Specs.Features.AddNewEntry
 {
-    [Trait("Add New Entry", "Happy Path")]
-    public class HappyPath : Fixture
+    [Trait("Add New Entry", "Unauthorized User")]
+    public class UnauthorizedUser : Fixture
     {
         private readonly HttpResponseMessage _response;
         private readonly CreateEntry.Command _newEntry;
 
-        public HappyPath(WebApplicationFactory<Startup> factory) : base(factory)
+        public UnauthorizedUser(WebApplicationFactory<Startup> factory) : base(factory)
         {
-            var client = this.CreateAuthenticatedClient(new []
-                {
-                    new Claim("CreateNewEntry", "")
-                });
+            var client = this.CreateAnonymousClient();
 
             _newEntry = new CreateEntry.Command(new[] { "tag1", "tag2", "tag3" });
 
@@ -34,26 +30,18 @@ namespace Specs.Features.AddNewEntry
             WaitForUserToContinueTheTest(Store);
         }
 
-        [Fact(DisplayName = "1. Status 200 is returned")]
+        [Fact(DisplayName = "1. Status 403 is returned")]
         public void StatusReturned()
         {
-            _response.StatusCode.Should().Be(200);
+            _response.StatusCode.Should().Be(403);
         }
 
-        [Fact(DisplayName = "2. One entry is created in the database")]
-        public void OneEntryCreated()
+        [Fact(DisplayName = "2. Entry is not added to the database")]
+        public void EntryNotAdded()
         {
             Store.OpenSession().Query<Entry>().Statistics(out QueryStatistics stats).ToList();
 
-            stats.TotalResults.Should().Be(1);
-        }
-
-        [Fact(DisplayName = "3. New entry has expected content")]
-        public void ExpectedContent()
-        {
-            var entry = Store.OpenSession().Query<Entry>().Single();
-
-            entry.Tags.Should().BeEquivalentTo(_newEntry.Tags);
+            stats.TotalResults.Should().Be(0);
         }
     }
 }
