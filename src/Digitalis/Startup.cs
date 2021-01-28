@@ -20,6 +20,8 @@ using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using Digitalis.Services;
 using Serilog;
+using Serilog.Context;
+using Serilog.Core.Enrichers;
 
 namespace Digitalis
 {
@@ -156,6 +158,18 @@ namespace Digitalis
             {
                 endpoints.MapHealthChecks("/healthcheck");
                 endpoints.MapControllers();
+            });
+
+            app.Use(async (ctx, next) =>
+            {
+                using (LogContext.Push(
+                    new PropertyEnricher("IPAddress", ctx.Connection.RemoteIpAddress),
+                    new PropertyEnricher("RequestHost", ctx.Request.Host),
+                    new PropertyEnricher("RequestBasePath", ctx.Request.Path),
+                    new PropertyEnricher("RequestQueryParams", ctx.Request.QueryString)))
+                {
+                    await next();
+                }
             });
 
             app.UseSerilogRequestLogging();

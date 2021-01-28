@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using System.Collections.Generic;
@@ -26,14 +27,16 @@ namespace Digitalis.Infrastructure
 
             long start = Stopwatch.GetTimestamp();
             long stop = 0;
+            int category = 2;
             try
             {
                 response = await next();
                 stop = Stopwatch.GetTimestamp();
                 return response;
             }
-            catch
+            catch (Exception ex)
             {
+                category = 5;
                 // log exception here
                 throw;
             }
@@ -51,8 +54,19 @@ namespace Digitalis.Infrastructure
                 dynamic actor = JObject.Parse(serializedRequest);
                 string actorEmail = actor.Actor != null ? actor.Actor.Email : _ctx.HttpContext.Connection.RemoteIpAddress.ToString();
 
-                Log.Information("{Actor} {Input} {Output} {Elapsed}", actorEmail, serializedRequest, serializedResponse,
-                    elapsed);
+                switch (category)
+                {
+                    case 2:
+                        Log.Information("{Actor} {Input} {Output} {Elapsed}", 
+                            actorEmail, serializedRequest, serializedResponse, elapsed);
+                        break;
+                    case 5:
+                        Log.Error("{Actor} {Input} {Output} {Elapsed}", 
+                            actorEmail, serializedRequest, serializedResponse, elapsed);
+                        break;
+                    default: break;
+                }
+
             }
         }
 
