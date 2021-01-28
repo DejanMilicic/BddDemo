@@ -73,5 +73,30 @@ namespace Specs.Controllers
             var entry = entries.Single();
             entry.Tags.Should().BeEquivalentTo(newEntryModel.Tags);
         }
+
+        [Fact(DisplayName = "Unauthorized user adds entry")]
+        public async void UnauthorizedUserAddsEntry()
+        {
+            var httpClient = this.CreateAuthenticatedClient(
+                new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, "12345678-1234-1234-1234-123456789012"),
+                    new Claim(ClaimTypes.Name, "TestUser"),
+                    new Claim(ClaimTypes.Email, "test.user@example.com"),
+                });
+
+            var newEntryModel = new CreateEntryModel(new[] { "tag1", "tag2", "tag3" });
+
+            var requestMessage = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                Content = new StringContent(JsonSerializer.Serialize(newEntryModel), Encoding.UTF8, MediaTypeNames.Application.Json),
+                RequestUri = new Uri(httpClient.BaseAddress + "entry")
+            };
+
+            var result = await httpClient.SendAsync(requestMessage);
+
+            result.StatusCode.Should().Be(403);
+        }
     }
 }
