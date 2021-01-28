@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using MediatR;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Serilog;
@@ -11,6 +12,13 @@ namespace Digitalis.Infrastructure
 {
     public class LoggingPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     {
+        private readonly IHttpContextAccessor _ctx;
+
+        public LoggingPipelineBehavior(IHttpContextAccessor ctx)
+        {
+            _ctx = ctx;
+        }
+
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken,
             RequestHandlerDelegate<TResponse> next)
         {
@@ -41,7 +49,7 @@ namespace Digitalis.Infrastructure
                     elapsed = $"{GetElapsedMilliseconds(start, stop):0.0000}";
 
                 dynamic actor = JObject.Parse(serializedRequest);
-                string actorEmail = actor.Actor != null ? actor.Actor.Email : "unknown actor";
+                string actorEmail = actor.Actor != null ? actor.Actor.Email : _ctx.HttpContext.Connection.RemoteIpAddress.ToString();
 
                 Log.Information("{Actor} {Input} {Output} {Elapsed}", actorEmail, serializedRequest, serializedResponse,
                     elapsed);
