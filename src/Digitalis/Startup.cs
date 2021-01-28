@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Digitalis.Infrastructure;
@@ -100,6 +101,7 @@ namespace Digitalis
             options.Rethrow<NotSupportedException>();
 
             options.MapToStatusCode<NotImplementedException>(StatusCodes.Status501NotImplemented);
+            options.MapToStatusCode<AuthenticationException>(StatusCodes.Status401Unauthorized);
             options.MapToStatusCode<UnauthorizedAccessException>(StatusCodes.Status403Forbidden);
 
             options.MapToStatusCode<HttpRequestException>(StatusCodes.Status503ServiceUnavailable);

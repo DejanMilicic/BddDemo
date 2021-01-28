@@ -51,6 +51,17 @@ namespace Specs.Infrastructure
                  });
             }).CreateClient();
         }
+
+        public HttpClient CreateAnonymousClient()
+        {
+            return this.Factory.WithWebHostBuilder(builder =>
+            {
+                 builder.ConfigureTestServices(services =>
+                 {
+                     services.AddSingleton<IDocumentStore>(Store);
+                 });
+            }).CreateClient();
+        }
     }
 
     public class FakeUserFilter : IAsyncActionFilter

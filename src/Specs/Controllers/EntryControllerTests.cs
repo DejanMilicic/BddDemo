@@ -98,5 +98,24 @@ namespace Specs.Controllers
 
             result.StatusCode.Should().Be(403);
         }
+
+        [Fact(DisplayName = "Unauthenticated user adds entry")]
+        public async void UnauthenticatedUserAddsEntry()
+        {
+            var httpClient = this.CreateAnonymousClient();
+
+            var newEntryModel = new CreateEntryModel(new[] { "tag1", "tag2", "tag3" });
+
+            var requestMessage = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                Content = new StringContent(JsonSerializer.Serialize(newEntryModel), Encoding.UTF8, MediaTypeNames.Application.Json),
+                RequestUri = new Uri(httpClient.BaseAddress + "entry")
+            };
+
+            var result = await httpClient.SendAsync(requestMessage);
+
+            result.StatusCode.Should().Be(401);
+        }
     }
 }
