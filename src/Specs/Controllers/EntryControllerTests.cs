@@ -106,14 +106,9 @@ namespace Specs.Controllers
 
             var newEntryModel = new CreateEntryModel(new[] { "tag1", "tag2", "tag3" });
 
-            var requestMessage = new HttpRequestMessage
-            {
-                Method = HttpMethod.Post,
-                Content = new StringContent(JsonSerializer.Serialize(newEntryModel), Encoding.UTF8, MediaTypeNames.Application.Json),
-                RequestUri = new Uri(httpClient.BaseAddress + "entry")
-            };
-
-            var result = await httpClient.SendAsync(requestMessage);
+            var result = await httpClient.PostAsync("/entry",
+                new StringContent(JsonSerializer.Serialize(newEntryModel), Encoding.UTF8,
+                    MediaTypeNames.Application.Json));
 
             result.StatusCode.Should().Be(401);
         }
