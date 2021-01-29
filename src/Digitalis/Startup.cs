@@ -121,16 +121,6 @@ namespace Digitalis
                 //app.UseDeveloperExceptionPage();
             }
 
-            app.UseOpenApi(); 
-            app.UseSwaggerUi3(settings =>
-            {
-                settings.Path = "/openapi";
-            });
-            app.UseSwaggerUi3(settings =>
-            {
-                settings.DocExpansion = "list";
-            });
-
             app.Use(async (ctx, next) =>
             {
                 using (LogContext.Push(
@@ -154,6 +144,12 @@ namespace Digitalis
             {
                 endpoints.MapHealthChecks("/healthcheck");
                 endpoints.MapControllers();
+            });
+
+            app.UseOpenApi();
+            app.UseSwaggerUi3(settings =>
+            {
+                settings.DocExpansion = "list";
             });
         }
     }
