@@ -52,7 +52,8 @@ namespace Digitalis.Infrastructure
                     elapsed = $"{GetElapsedMilliseconds(start, stop):0.0000}";
 
                 dynamic actor = JObject.Parse(serializedRequest);
-                string actorEmail = actor.Actor != null ? actor.Actor.Email : _ctx.HttpContext.Connection.RemoteIpAddress.ToString();
+                //string actorEmail = actor.Actor != null ? actor.Actor.Email : _ctx.HttpContext.Connection.RemoteIpAddress.ToString();
+                string actorEmail = _ctx.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "";
 
                 switch (category)
                 {
