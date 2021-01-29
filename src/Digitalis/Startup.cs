@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NJsonSchema.Generation;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
 using Raven.Client.Documents.Session;
@@ -25,14 +24,6 @@ using Serilog.Core.Enrichers;
 
 namespace Digitalis
 {
-    internal class CustomSchemaNameGenerator : ISchemaNameGenerator
-    {
-        public string Generate(Type type)
-        {
-            return type.FullName.Replace(".", "_");
-        }
-    }
-
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -101,7 +92,6 @@ namespace Digitalis
 
             services.AddProblemDetails(ConfigureProblemDetails);
 
-            //services.AddOpenApiDocument(cfg => { cfg.SchemaNameGenerator = new CustomSchemaNameGenerator(); });
             services.AddSwaggerDocument(cfg => { cfg.SchemaNameGenerator = new CustomSchemaNameGenerator(); });
         }
 
@@ -132,21 +122,13 @@ namespace Digitalis
             }
 
             app.UseOpenApi(); 
-            app.UseSwaggerUi3(options =>
+            app.UseSwaggerUi3(settings =>
             {
-                options.Path = "/openapi";
-                options.DocumentPath = "/openapi/v1/openapi.json";
+                settings.Path = "/openapi";
             });
             app.UseSwaggerUi3(settings =>
             {
                 settings.DocExpansion = "list";
-
-            });
-
-            app.UseReDoc(config =>
-            {
-                config.Path = "/redoc";
-                config.DocumentPath = "/swagger/v1/swagger.json";
             });
 
             app.Use(async (ctx, next) =>
