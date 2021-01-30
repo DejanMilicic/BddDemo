@@ -48,7 +48,8 @@ jobs:
       
       # run tests with built project
     - name: Test PR      
-      run: dotnet test .\src\Digitalis.sln --no-restore --no-build --configuration ${Env:config} --logger:"liquid.md;LogFileName=${{github.workspace}}\${Env:file_name};Title=${Env:title};"
+      #run: dotnet test .\src\Digitalis.sln --no-restore --no-build --configuration ${Env:config} --logger:"liquid.md;LogFileName=${{github.workspace}}\${Env:file_name};Title=${Env:title};"
+      run: dotnet test .\src\Digitalis.sln --no-restore --no-build --configuration ${Env:config} --logger:"liquid.md;LogFileName=${GITHUB_WORKSPACE}\TestReport.md;Title=Test_Run;"
       
       # upload report as build artifact
     - name: Upload a Build Artifact
