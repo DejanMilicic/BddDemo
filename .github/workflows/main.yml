@@ -17,11 +17,11 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.101    
+        dotnet-version: 5.0.102    
       
       # restore dependencies  
     - name: Install dependencies
-      run: dotnet restore
+      run: dotnet restore ./src/Digitalis.sln
       
       # build project
     - name: Build
