@@ -25,7 +25,7 @@ jobs:
       
       # build project
     - name: Build
-      run: dotnet build .\src\Digitalis.sln --configuration Release --no-restore
+      run: dotnet build .\src\Digitalis.sln --configuration ${Env:config} --no-restore
       
     - name: set pr build number (if pr)
       id: PRNUMBER
@@ -36,13 +36,15 @@ jobs:
     - name: Set Test Title
       run: | 
             if (github.event_name == 'pull_request')
-            then
+            {
               echo "title=Test Run for PR #${{steps.PRNUMBER.outputs.pr}} (${{github.run_number}})" >> $GITHUB_ENV
               echo "file_name=TestReport.${{steps.PRNUMBER.outputs.pr}}.${{github.run_number}}.md" >> $GITHUB_ENV
+            }
             else
+            {
               echo "title=Test Run ${{github.run_number}}" >> $GITHUB_ENV
               echo "file_name=TestReport.${{github.run_number}}.md" >> $GITHUB_ENV
-            fi
+            }
       
       # run tests with built project
     - name: Test PR      
