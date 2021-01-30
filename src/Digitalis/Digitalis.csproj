@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Ardalis.SmartEnum" Version="2.0.0" />
     <PackageReference Include="Bogus" Version="32.0.2" />
     <PackageReference Include="FluentValidation" Version="9.4.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="9.4.0" />

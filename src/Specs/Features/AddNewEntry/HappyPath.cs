@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Security.Claims;
 using Digitalis;
 using Digitalis.Features;
+using Digitalis.Infrastructure;
 using Digitalis.Models;
 using FakeItEasy;
 using FluentAssertions;
@@ -25,7 +26,7 @@ namespace Specs.Features.AddNewEntry
         {
             var client = this.CreateAuthenticatedClient(new []
                 {
-                    new Claim("CreateNewEntry", "")
+                    new Claim(DigitalisClaims.CreateNewEntry, "")
                 });
 
             _newEntry = new CreateEntry.Command(new[] { "tag1", "tag2", "tag3" });
