@@ -17,6 +17,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+using Digitalis.Infrastructure.Mediatr;
 using Digitalis.Infrastructure.OpenApi;
 using Digitalis.Services;
 using Serilog;

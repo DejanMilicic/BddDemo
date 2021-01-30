@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Digitalis.Infrastructure;
+using Digitalis.Infrastructure.Mediatr;
 using Digitalis.Models;
 using Digitalis.Services;
 using FluentValidation;

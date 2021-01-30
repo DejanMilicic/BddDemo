@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace Digitalis.Infrastructure
+namespace Digitalis.Infrastructure.Mediatr
 {
     public class AuthorizerPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     {

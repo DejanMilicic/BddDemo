@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
 
-namespace Digitalis.Infrastructure
+namespace Digitalis.Infrastructure.Mediatr
 {
     public class ValidatorPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     {

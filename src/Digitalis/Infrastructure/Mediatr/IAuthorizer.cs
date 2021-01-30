@@ -1,4 +1,4 @@
-﻿namespace Digitalis.Infrastructure
+﻿namespace Digitalis.Infrastructure.Mediatr
 {
     public interface IAuthorizer<in T>
     {
