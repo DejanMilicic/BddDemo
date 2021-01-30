@@ -29,7 +29,7 @@ jobs:
       
     - name: set pr build number (if pr)
       id: PRNUMBER
-      if: ${{ github.event_name == 'pull_request' }}
+      if: ${{ github.event.name == 'pull_request' }}
       uses: kkak10/pr-number-action@v1.3
       
       # set report file and title 
