@@ -35,7 +35,7 @@ jobs:
       # set report file and title 
     - name: Set Test Title
       run: | 
-            if (github.event.name == 'pull_request')
+            if (${GITHUB_EVENT_NAME} == 'pull_request')
             {
               echo "title=Test Run for PR #${{steps.PRNUMBER.outputs.pr}} (${{github.run_number}})" >> $GITHUB_ENV
               echo "file_name=TestReport.${{steps.PRNUMBER.outputs.pr}}.${{github.run_number}}.md" >> $GITHUB_ENV
