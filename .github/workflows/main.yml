@@ -25,7 +25,7 @@ jobs:
       
       # build project
     - name: Build
-      run: dotnet build --configuration $config --no-restore
+      run: dotnet build ./src/Digitalis.sln --configuration $config --no-restore
       
     - name: set pr build number (if pr)
       id: PRNUMBER
@@ -46,7 +46,7 @@ jobs:
       
       # run tests with built project
     - name: Test PR      
-      run: dotnet test --no-restore --no-build --configuration $config --logger:"liquid.md;LogFileName=${{github.workspace}}/${{env.file_name}};Title=${{env.title}};"
+      run: dotnet test ./src/Digitalis.sln --no-restore --no-build --configuration $config --logger:"liquid.md;LogFileName=${{github.workspace}}/${{env.file_name}};Title=${{env.title}};"
       
       # upload report as build artifact
     - name: Upload a Build Artifact
