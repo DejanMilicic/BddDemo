@@ -94,7 +94,11 @@ namespace Digitalis
 
             services.AddProblemDetails(ConfigureProblemDetails);
 
-            services.AddSwaggerDocument(cfg => { cfg.SchemaNameGenerator = new CustomSchemaNameGenerator(); });
+            services.AddSwaggerDocument(settings =>
+            {
+                settings.SchemaNameGenerator = new CustomSchemaNameGenerator();
+                settings.Title = App.Title;
+            });
         }
 
         private void ConfigureProblemDetails(ProblemDetailsOptions options)
