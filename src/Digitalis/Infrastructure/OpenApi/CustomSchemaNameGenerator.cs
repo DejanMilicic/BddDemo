@@ -1,7 +1,7 @@
 using System;
 using NJsonSchema.Generation;
 
-namespace Digitalis.Infrastructure
+namespace Digitalis.Infrastructure.OpenApi
 {
     internal class CustomSchemaNameGenerator : ISchemaNameGenerator
     {
