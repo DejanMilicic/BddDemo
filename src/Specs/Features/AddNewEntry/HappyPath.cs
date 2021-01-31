@@ -56,13 +56,13 @@ namespace Specs.Features.AddNewEntry
             stats.TotalResults.Should().Be(1);
         }
 
-        //[Fact(DisplayName = "3. New entry has expected content")]
-        //public void ExpectedContent()
-        //{
-        //    var entry = Store.OpenSession().Query<Entry>().Single();
+        [Fact(DisplayName = "3. New entry has expected content")]
+        public void ExpectedContent()
+        {
+            var entry = Store.OpenSession().Query<Entry>().Single();
 
-        //    entry.Tags.Should().BeEquivalentTo(_newEntry.Tags);
-        //}
+            entry.Tags.Should().BeEquivalentTo(_newEntry.Tags);
+        }
 
         //[Fact(DisplayName = "4. One email is sent")]
         //public void OneEmailSent()
