@@ -38,13 +38,13 @@ namespace Specs.Features.AddNewEntry
         }
 
         [Fact(DisplayName = "1. Bad request is returned")]
-        public void StatusReturned()
+        public void BadRequest()
         {
             _response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
         [Fact(DisplayName = "2. Zero entries is created in the database")]
-        public void OneEntryCreated()
+        public void ZeroEntryCreated()
         {
             Store.OpenSession().Query<Entry>().Statistics(out QueryStatistics stats).ToList();
 
