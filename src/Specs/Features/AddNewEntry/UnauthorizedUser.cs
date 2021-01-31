@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
 using Digitalis;
@@ -33,9 +34,9 @@ namespace Specs.Features.AddNewEntry
         }
 
         [Fact(DisplayName = "1. Status 403 is returned")]
-        public void StatusReturned()
+        public void ForbiddenReturned()
         {
-            _response.StatusCode.Should().Be(403);
+            _response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         }
 
         [Fact(DisplayName = "2. Entry is not added to the database")]

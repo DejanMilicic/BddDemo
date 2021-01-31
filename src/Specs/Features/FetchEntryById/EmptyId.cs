@@ -54,7 +54,7 @@ namespace Specs.Features.FetchEntryById
         }
 
         [Fact(DisplayName = "2. Entry is not returned")]
-        public void EntryReturned()
+        public void EntryNotReturned()
         {
             _fetchedEntry.Should().BeNull();
         }
