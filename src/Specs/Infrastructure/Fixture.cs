@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Net.Mime;
 using System.Security.Claims;
@@ -76,6 +77,9 @@ namespace Specs.Infrastructure
 
         public T Deserialize<T>(HttpResponseMessage response)
         {
+            if (response.StatusCode != HttpStatusCode.OK)
+                return default(T);
+
             string content = response.Content.ReadAsStringAsync().Result;
             return JsonConvert.DeserializeObject<T>(content);
         }
