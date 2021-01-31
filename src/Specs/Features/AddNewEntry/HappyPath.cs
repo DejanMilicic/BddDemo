@@ -31,12 +31,12 @@ namespace Specs.Features.AddNewEntry
 
             _newEntry = new CreateEntry.Command(new[] { "tag1", "tag2", "tag3" });
 
-            Console.WriteLine("initiating POST");
+            Console.WriteLine("initiating Happy_Path POST");
 
             _response = client.PostAsync("/entry",
                 Serialize(_newEntry)).Result;
 
-            Console.WriteLine("POST completed");
+            Console.WriteLine("Happy_Path POST completed");
 
             WaitForIndexing(Store);
             WaitForUserToContinueTheTest(Store);
