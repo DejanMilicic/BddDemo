@@ -31,8 +31,12 @@ namespace Specs.Features.AddNewEntry
 
             _newEntry = new CreateEntry.Command(new[] { "tag1", "tag2", "tag3" });
 
+            Console.WriteLine("initiating POST");
+
             _response = client.PostAsync("/entry",
                 Serialize(_newEntry)).Result;
+
+            Console.WriteLine("POST completed");
 
             WaitForIndexing(Store);
             WaitForUserToContinueTheTest(Store);
@@ -44,67 +48,67 @@ namespace Specs.Features.AddNewEntry
             _response.StatusCode.Should().Be(200);
         }
 
-        [Fact(DisplayName = "2. One entry is created in the database")]
-        public void OneEntryCreated()
-        {
-            Store.OpenSession().Query<Entry>().Statistics(out QueryStatistics stats).ToList();
+        //[Fact(DisplayName = "2. One entry is created in the database")]
+        //public void OneEntryCreated()
+        //{
+        //    Store.OpenSession().Query<Entry>().Statistics(out QueryStatistics stats).ToList();
 
-            stats.TotalResults.Should().Be(1);
-        }
+        //    stats.TotalResults.Should().Be(1);
+        //}
 
-        [Fact(DisplayName = "3. New entry has expected content")]
-        public void ExpectedContent()
-        {
-            var entry = Store.OpenSession().Query<Entry>().Single();
+        //[Fact(DisplayName = "3. New entry has expected content")]
+        //public void ExpectedContent()
+        //{
+        //    var entry = Store.OpenSession().Query<Entry>().Single();
 
-            entry.Tags.Should().BeEquivalentTo(_newEntry.Tags);
-        }
+        //    entry.Tags.Should().BeEquivalentTo(_newEntry.Tags);
+        //}
 
-        [Fact(DisplayName = "4. One email is sent")]
-        public void OneEmailSent()
-        {
-            A.CallTo(() => Mailer
-                    .SendMail(
-                        A<string>.Ignored, 
-                        A<string>.Ignored, 
-                        A<string>.Ignored))
-                    .MustHaveHappenedOnceExactly();
-        }
+        //[Fact(DisplayName = "4. One email is sent")]
+        //public void OneEmailSent()
+        //{
+        //    A.CallTo(() => Mailer
+        //            .SendMail(
+        //                A<string>.Ignored, 
+        //                A<string>.Ignored, 
+        //                A<string>.Ignored))
+        //            .MustHaveHappenedOnceExactly();
+        //}
 
-        [Fact(DisplayName = "5. Email is addressed to admin")]
-        public void EmailAddressedToAdmin()
-        {
-            A.CallTo(() => Mailer
-                    .SendMail(
-                        A<string>.That.Matches(x => x == "admin@site.com"), 
-                        A<string>.Ignored, 
-                        A<string>.Ignored))
-                    .MustHaveHappenedOnceExactly();
-        }
+        //[Fact(DisplayName = "5. Email is addressed to admin")]
+        //public void EmailAddressedToAdmin()
+        //{
+        //    A.CallTo(() => Mailer
+        //            .SendMail(
+        //                A<string>.That.Matches(x => x == "admin@site.com"), 
+        //                A<string>.Ignored, 
+        //                A<string>.Ignored))
+        //            .MustHaveHappenedOnceExactly();
+        //}
 
-        [Fact(DisplayName = "6. Email subject is correct")]
-        public void EmailSubjectIsCorrect()
-        {
-            A.CallTo(() => Mailer
-                    .SendMail(
-                        A<string>.Ignored, 
-                        A<string>.That.Matches(x => x == "New entry created"), 
-                        A<string>.Ignored))
-                    .MustHaveHappenedOnceExactly();
-        }
+        //[Fact(DisplayName = "6. Email subject is correct")]
+        //public void EmailSubjectIsCorrect()
+        //{
+        //    A.CallTo(() => Mailer
+        //            .SendMail(
+        //                A<string>.Ignored, 
+        //                A<string>.That.Matches(x => x == "New entry created"), 
+        //                A<string>.Ignored))
+        //            .MustHaveHappenedOnceExactly();
+        //}
 
-        [Fact(DisplayName = "7. Email body contains all tags")]
-        public void EmailBodyContainsAllTags()
-        {
-            foreach (string tag in _newEntry.Tags)
-            {
-                A.CallTo(() => Mailer
-                        .SendMail(
-                            A<string>.Ignored, 
-                            A<string>.Ignored, 
-                            A<string>.That.Matches(x => _newEntry.Tags.All(x.Contains))))
-                        .MustHaveHappenedOnceExactly();                
-            }
-        }
+        //[Fact(DisplayName = "7. Email body contains all tags")]
+        //public void EmailBodyContainsAllTags()
+        //{
+        //    foreach (string tag in _newEntry.Tags)
+        //    {
+        //        A.CallTo(() => Mailer
+        //                .SendMail(
+        //                    A<string>.Ignored, 
+        //                    A<string>.Ignored, 
+        //                    A<string>.That.Matches(x => _newEntry.Tags.All(x.Contains))))
+        //                .MustHaveHappenedOnceExactly();                
+        //    }
+        //}
     }
 }
