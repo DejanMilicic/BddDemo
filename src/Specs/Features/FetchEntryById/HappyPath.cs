@@ -1,14 +1,11 @@
-﻿using System.Linq;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Security.Claims;
 using Digitalis;
 using Digitalis.Features;
 using Digitalis.Infrastructure;
 using Digitalis.Models;
-using FakeItEasy;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Raven.Client.Documents.Session;
 using Specs.Infrastructure;
 using Xunit;
 
