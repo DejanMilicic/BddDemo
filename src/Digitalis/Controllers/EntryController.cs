@@ -48,6 +48,9 @@ namespace Digitalis.Controllers
         }
 
         [HttpPost("entry")]
-        public async Task<string> Post([FromBody] CreateEntry.Command entry) => await _mediator.Send(entry);
+        public async Task<string> Post([FromBody] CreateEntry.Command command) => await _mediator.Send(command);
+
+        [HttpGet("entry")]
+        public async Task<Entity> Get([FromQuery] FetchEntry.Query query) => await _mediator.Send(query);
     }
 }
