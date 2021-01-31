@@ -25,12 +25,8 @@ namespace Specs.Features.AddNewEntry
 
             _newEntry = new CreateEntry.Command(new[] { "tag1", "tag2", "tag3" });
 
-            Console.WriteLine("initiating Anon_User POST");
-
             _response = client.PostAsync("/entry",
                 Serialize(_newEntry)).Result;
-
-            Console.WriteLine("Anon_User POST completed");
 
             WaitForIndexing(Store);
             WaitForUserToContinueTheTest(Store);
