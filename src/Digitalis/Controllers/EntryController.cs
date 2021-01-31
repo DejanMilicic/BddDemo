@@ -27,7 +27,7 @@ namespace Digitalis.Controllers
         [HttpPost("entry/seed")]
         public async Task<string> Seed()
         {
-            DetailedDatabaseStatistics stats = _store.Maintenance.Send(new GetDetailedStatisticsOperation());
+            DetailedDatabaseStatistics stats = await _store.Maintenance.SendAsync(new GetDetailedStatisticsOperation()).ConfigureAwait(false);
             if (stats.CountOfDocuments > 0)
                 return "Database is already seeded";
 

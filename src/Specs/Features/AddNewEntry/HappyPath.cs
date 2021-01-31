@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
+using System.Threading;
 using Digitalis;
 using Digitalis.Features;
 using Digitalis.Infrastructure;
@@ -24,6 +25,8 @@ namespace Specs.Features.AddNewEntry
 
         public HappyPath(WebApplicationFactory<Startup> factory) : base(factory)
         {
+            Console.WriteLine("Before 1...");
+
             var client = this.CreateAuthenticatedClient(new []
                 {
                     new Claim(DigitalisClaims.CreateNewEntry, "")
@@ -31,11 +34,15 @@ namespace Specs.Features.AddNewEntry
 
             _newEntry = new CreateEntry.Command(new[] { "tag1", "tag2", "tag3" });
 
-            _response = client.PostAsync("/entry",
-                Serialize(_newEntry)).Result;
+            Console.WriteLine("Before 2...");
 
-            WaitForIndexing(Store);
-            WaitForUserToContinueTheTest(Store);
+            using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30)))
+                _response = client.PostAsync("/entry", Serialize(_newEntry), cts.Token).GetAwaiter().GetResult();
+
+            Console.WriteLine("After...");
+
+            //WaitForIndexing(Store);
+            //WaitForUserToContinueTheTest(Store);
         }
 
         [Fact(DisplayName = "1. Status 200 is returned")]

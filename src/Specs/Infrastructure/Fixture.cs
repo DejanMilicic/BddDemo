@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Mime;
 using System.Security.Claims;
@@ -21,6 +22,14 @@ namespace Specs.Infrastructure
 {
     public class Fixture : RavenTestDriver, IClassFixture<WebApplicationFactory<Startup>>
     {
+        static Fixture()
+        {
+            ConfigureServer(new TestServerOptions
+            {
+                FrameworkVersion = null
+            });
+        }
+
         protected readonly IDocumentStore Store;
         protected readonly WebApplicationFactory<Startup> Factory;
         protected readonly IMailer Mailer;
@@ -31,8 +40,20 @@ namespace Specs.Infrastructure
 
             Mailer = A.Fake<IMailer>();
 
-            Store = this.GetDocumentStore();
-            IndexCreation.CreateIndexes(typeof(Startup).Assembly, Store);
+            Console.WriteLine("Creating... " + GetType().Name);
+
+            Store = GetDocumentStore();
+
+            Console.WriteLine("Created... " + GetType().Name);
+
+            //IndexCreation.CreateIndexes(typeof(Startup).Assembly, Store);
+        }
+
+        public override void Dispose()
+        {
+            Console.WriteLine("Disposing... " + GetType().Name);
+            base.Dispose();
+            Console.WriteLine("Disposed... " + GetType().Name);
         }
 
         public HttpClient CreateAuthenticatedClient(IEnumerable<Claim> claims)
