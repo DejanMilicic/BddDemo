@@ -49,7 +49,7 @@ namespace Specs.Features.AddNewEntry
         {
             Store.OpenSession().Query<Entry>().Statistics(out QueryStatistics stats).ToList();
 
-            stats.TotalResults.Should().Be(0);
+            stats.TotalResults.Should().Be(1);
         }
 
         [Fact(DisplayName = "3. New entry has expected content")]
