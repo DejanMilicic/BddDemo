@@ -60,7 +60,7 @@ namespace Digitalis.Features
                 };
 
                 await _session.StoreAsync(entry, cancellationToken);
-                await _session.SaveChangesAsync(cancellationToken);
+                //await _session.SaveChangesAsync(cancellationToken);
 
                 _mailer.SendMail("admin@site.com", "New entry created", String.Join(", ", entry.Tags));
 
