@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Mime;
@@ -37,8 +38,10 @@ namespace Specs.Infrastructure
             IndexCreation.CreateIndexes(typeof(Startup).Assembly, Store);
         }
 
-        public HttpClient CreateAuthenticatedClient(IEnumerable<Claim> claims)
+        public HttpClient CreateAuthenticatedClient(IEnumerable<Claim> claims = null)
         {
+            claims ??= Enumerable.Empty<Claim>();
+
             return this.Factory.WithWebHostBuilder(builder =>
             {
                  builder.ConfigureTestServices(services =>
