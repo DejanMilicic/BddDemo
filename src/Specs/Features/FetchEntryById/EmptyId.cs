@@ -17,7 +17,6 @@ namespace Specs.Features.FetchEntryById
     {
         private readonly HttpResponseMessage _response;
         private readonly CreateEntry.Command _newEntry;
-        private readonly string _newEntryId;
         private readonly Entry _fetchedEntry;
 
         public EmptyId(WebApplicationFactory<Startup> factory) : base(factory)
@@ -36,8 +35,6 @@ namespace Specs.Features.FetchEntryById
 
             _response = creatorClient.PostAsync("/entry",
                 Serialize(_newEntry)).Result;
-
-            _newEntryId = _response.Content.ReadAsStringAsync().Result;
 
             _response = readerClient.GetAsync($"/entry?id=").Result;
 
