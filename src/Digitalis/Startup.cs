@@ -13,6 +13,7 @@ using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
 using Raven.Client.Documents.Session;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Reflection;
 using System.Security.Authentication;
@@ -109,6 +110,7 @@ namespace Digitalis
             options.MapToStatusCode<AuthenticationException>(StatusCodes.Status401Unauthorized);
             options.MapToStatusCode<UnauthorizedAccessException>(StatusCodes.Status403Forbidden);
             options.MapToStatusCode<InputValidationException>(StatusCodes.Status400BadRequest);
+            options.MapToStatusCode<KeyNotFoundException>(StatusCodes.Status404NotFound);
 
             options.MapToStatusCode<HttpRequestException>(StatusCodes.Status503ServiceUnavailable);
 

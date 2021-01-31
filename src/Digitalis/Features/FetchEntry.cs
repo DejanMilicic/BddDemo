@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Digitalis.Infrastructure;
@@ -49,7 +50,12 @@ namespace Digitalis.Features
 
             public async Task<Entry> Handle(Query query, CancellationToken cancellationToken)
             {
-                return await _session.LoadAsync<Entry>(query.id, cancellationToken);
+                Entry entry = await _session.LoadAsync<Entry>(query.id, cancellationToken);
+
+                if (entry == null)
+                    throw new KeyNotFoundException();
+
+                return entry;
             }
         }
     }
