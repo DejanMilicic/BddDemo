@@ -64,16 +64,16 @@ namespace Specs.Features.AddNewEntry
             entry.Tags.Should().BeEquivalentTo(_newEntry.Tags);
         }
 
-        //[Fact(DisplayName = "4. One email is sent")]
-        //public void OneEmailSent()
-        //{
-        //    A.CallTo(() => Mailer
-        //            .SendMail(
-        //                A<string>.Ignored, 
-        //                A<string>.Ignored, 
-        //                A<string>.Ignored))
-        //            .MustHaveHappenedOnceExactly();
-        //}
+        [Fact(DisplayName = "4. One email is sent")]
+        public void OneEmailSent()
+        {
+            A.CallTo(() => Mailer
+                    .SendMail(
+                        A<string>.Ignored,
+                        A<string>.Ignored,
+                        A<string>.Ignored))
+                    .MustHaveHappenedOnceExactly();
+        }
 
         //[Fact(DisplayName = "5. Email is addressed to admin")]
         //public void EmailAddressedToAdmin()
