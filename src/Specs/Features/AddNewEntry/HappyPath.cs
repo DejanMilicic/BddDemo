@@ -48,13 +48,13 @@ namespace Specs.Features.AddNewEntry
             _response.StatusCode.Should().Be(200);
         }
 
-        //[Fact(DisplayName = "2. One entry is created in the database")]
-        //public void OneEntryCreated()
-        //{
-        //    Store.OpenSession().Query<Entry>().Statistics(out QueryStatistics stats).ToList();
+        [Fact(DisplayName = "2. One entry is created in the database")]
+        public void OneEntryCreated()
+        {
+            Store.OpenSession().Query<Entry>().Statistics(out QueryStatistics stats).ToList();
 
-        //    stats.TotalResults.Should().Be(1);
-        //}
+            stats.TotalResults.Should().Be(1);
+        }
 
         //[Fact(DisplayName = "3. New entry has expected content")]
         //public void ExpectedContent()
