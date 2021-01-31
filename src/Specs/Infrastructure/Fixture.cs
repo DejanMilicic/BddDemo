@@ -19,6 +19,7 @@ using Xunit;
 
 namespace Specs.Infrastructure
 {
+    [CollectionDefinition("Nonparallel Collection", DisableParallelization = true)]
     public class Fixture : RavenTestDriver, IClassFixture<WebApplicationFactory<Startup>>
     {
         protected readonly IDocumentStore Store;
