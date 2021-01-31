@@ -75,40 +75,40 @@ namespace Specs.Features.AddNewEntry
                     .MustHaveHappenedOnceExactly();
         }
 
-        //[Fact(DisplayName = "5. Email is addressed to admin")]
-        //public void EmailAddressedToAdmin()
-        //{
-        //    A.CallTo(() => Mailer
-        //            .SendMail(
-        //                A<string>.That.Matches(x => x == "admin@site.com"), 
-        //                A<string>.Ignored, 
-        //                A<string>.Ignored))
-        //            .MustHaveHappenedOnceExactly();
-        //}
+        [Fact(DisplayName = "5. Email is addressed to admin")]
+        public void EmailAddressedToAdmin()
+        {
+            A.CallTo(() => Mailer
+                    .SendMail(
+                        A<string>.That.Matches(x => x == "admin@site.com"),
+                        A<string>.Ignored,
+                        A<string>.Ignored))
+                    .MustHaveHappenedOnceExactly();
+        }
 
-        //[Fact(DisplayName = "6. Email subject is correct")]
-        //public void EmailSubjectIsCorrect()
-        //{
-        //    A.CallTo(() => Mailer
-        //            .SendMail(
-        //                A<string>.Ignored, 
-        //                A<string>.That.Matches(x => x == "New entry created"), 
-        //                A<string>.Ignored))
-        //            .MustHaveHappenedOnceExactly();
-        //}
+        [Fact(DisplayName = "6. Email subject is correct")]
+        public void EmailSubjectIsCorrect()
+        {
+            A.CallTo(() => Mailer
+                    .SendMail(
+                        A<string>.Ignored,
+                        A<string>.That.Matches(x => x == "New entry created"),
+                        A<string>.Ignored))
+                    .MustHaveHappenedOnceExactly();
+        }
 
-        //[Fact(DisplayName = "7. Email body contains all tags")]
-        //public void EmailBodyContainsAllTags()
-        //{
-        //    foreach (string tag in _newEntry.Tags)
-        //    {
-        //        A.CallTo(() => Mailer
-        //                .SendMail(
-        //                    A<string>.Ignored, 
-        //                    A<string>.Ignored, 
-        //                    A<string>.That.Matches(x => _newEntry.Tags.All(x.Contains))))
-        //                .MustHaveHappenedOnceExactly();                
-        //    }
-        //}
+        [Fact(DisplayName = "7. Email body contains all tags")]
+        public void EmailBodyContainsAllTags()
+        {
+            foreach (string tag in _newEntry.Tags)
+            {
+                A.CallTo(() => Mailer
+                        .SendMail(
+                            A<string>.Ignored,
+                            A<string>.Ignored,
+                            A<string>.That.Matches(x => _newEntry.Tags.All(x.Contains))))
+                        .MustHaveHappenedOnceExactly();
+            }
+        }
     }
 }
