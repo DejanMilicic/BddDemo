@@ -25,7 +25,7 @@ namespace Specs.Features.AddNewEntry
         {
             var client = this.CreateAuthenticatedClient(new[]
                 {
-                    new Claim(DigitalisClaims.CreateNewEntry, "")
+                    new Claim(AppClaims.CreateNewEntry, "")
                 });
 
             _newEntry = new CreateEntry.Command(new string[] { });

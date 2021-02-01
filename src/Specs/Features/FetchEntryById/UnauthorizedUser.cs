@@ -24,7 +24,7 @@ namespace Specs.Features.FetchEntryById
         {
             var creatorClient = this.CreateAuthenticatedClient(new []
                 {
-                    new Claim(DigitalisClaims.CreateNewEntry, "")
+                    new Claim(AppClaims.CreateNewEntry, "")
                 });
 
             var readerClient = this.CreateAuthenticatedClient();

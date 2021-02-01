@@ -29,7 +29,7 @@ namespace Digitalis.Features
 
             public bool IsAuthorized(Command request)
             {
-                return _claimsIdentity.HasClaim(DigitalisClaims.CreateNewEntry, "");
+                return _claimsIdentity.HasClaim(AppClaims.CreateNewEntry, "");
             }
         }
 

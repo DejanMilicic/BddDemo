@@ -23,12 +23,12 @@ namespace Specs.Features.FetchEntryById
         {
             var creatorClient = this.CreateAuthenticatedClient(new []
                 {
-                    new Claim(DigitalisClaims.CreateNewEntry, "")
+                    new Claim(AppClaims.CreateNewEntry, "")
                 });
 
             var readerClient = this.CreateAuthenticatedClient(new []
                 {
-                    new Claim(DigitalisClaims.FetchEntry, "")
+                    new Claim(AppClaims.FetchEntry, "")
                 });
 
             _newEntry = new CreateEntry.Command(new[] { "tag1", "tag2", "tag3" });

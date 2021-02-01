@@ -27,7 +27,7 @@ namespace Digitalis.Features
 
             public bool IsAuthorized(Query request)
             {
-                return _claimsIdentity.HasClaim(DigitalisClaims.FetchEntry, "");
+                return _claimsIdentity.HasClaim(AppClaims.FetchEntry, "");
             }
         }
 

@@ -22,7 +22,7 @@ namespace Specs.Features.FetchEntryById
         {
             var readerClient = this.CreateAuthenticatedClient(new []
                 {
-                    new Claim(DigitalisClaims.FetchEntry, "")
+                    new Claim(AppClaims.FetchEntry, "")
                 });
 
             _response = readerClient.GetAsync($"/entry?id=NONEXISTING").Result;
