@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Bogus;
 using Digitalis.Features;
+using Digitalis.Infrastructure;
 using Digitalis.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

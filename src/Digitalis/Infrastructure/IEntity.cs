@@ -1,6 +1,6 @@
 ﻿using NUlid;
 
-namespace Digitalis.Models
+namespace Digitalis.Infrastructure
 {
     public abstract class Entity
     {
