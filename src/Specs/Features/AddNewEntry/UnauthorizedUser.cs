@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
@@ -22,7 +23,10 @@ namespace Specs.Features.AddNewEntry
 
         public UnauthorizedUser(WebApplicationFactory<Startup> factory) : base(factory)
         {
-            var client = this.CreateAuthenticatedClient(new Claim[] { });
+            var client = AuthClient(new Dictionary<string, string>
+            {
+                { "email", "john@doe.com" }
+            });
 
             _newEntry = new CreateEntry.Command(new[] { "tag1", "tag2", "tag3" });
 
