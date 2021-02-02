@@ -1,5 +1,5 @@
-﻿using System.Net.Http;
-using System.Security.Claims;
+﻿using System.Collections.Generic;
+using System.Net.Http;
 using Digitalis;
 using Digitalis.Features;
 using Digitalis.Infrastructure;
@@ -21,14 +21,16 @@ namespace Specs.Features.FetchEntryById
 
         public HappyPath(WebApplicationFactory<Startup> factory) : base(factory)
         {
-            var creatorClient = this.CreateAuthenticatedClient(new []
+            var creatorClient = AuthClient(new Dictionary<string, string>
                 {
-                    new Claim(AppClaims.CreateNewEntry, "")
+                    { "email", "john@doe.com" },
+                    { AppClaims.CreateNewEntry, "" }
                 });
 
-            var readerClient = this.CreateAuthenticatedClient(new []
+            var readerClient = AuthClient(new Dictionary<string, string>
                 {
-                    new Claim(AppClaims.FetchEntry, "")
+                    { "email", "john@doe.com" },
+                    { AppClaims.FetchEntry, "" }
                 });
 
             _newEntry = new CreateEntry.Command(new[] { "tag1", "tag2", "tag3" });

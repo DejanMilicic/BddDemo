@@ -9,6 +9,7 @@ using Specs.Infrastructure;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using Digitalis.Infrastructure;
 using Xunit;
 
 namespace Specs.Features.AddNewEntry
@@ -24,7 +25,7 @@ namespace Specs.Features.AddNewEntry
             var client = AuthClient(new Dictionary<string, string>
                 {
                     { "email", "john@doe.com" },
-                    { "CreateNewEntry", "" }
+                    { AppClaims.CreateNewEntry, "" }
                 });
 
             _newEntry = new CreateEntry.Command(new[] { "tag1", "tag2", "tag3" });

@@ -1,8 +1,7 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
-using System.Security.Claims;
 using Digitalis;
-using Digitalis.Features;
 using Digitalis.Infrastructure;
 using Digitalis.Models;
 using FluentAssertions;
@@ -20,9 +19,10 @@ namespace Specs.Features.FetchEntryById
 
         public NonexistingEntry(WebApplicationFactory<Startup> factory) : base(factory)
         {
-            var readerClient = this.CreateAuthenticatedClient(new []
+            var readerClient = AuthClient(new Dictionary<string, string>
                 {
-                    new Claim(AppClaims.FetchEntry, "")
+                    { "email", "john@doe.com" },
+                    { AppClaims.FetchEntry, "" }
                 });
 
             _response = readerClient.GetAsync($"/entry?id=NONEXISTING").Result;

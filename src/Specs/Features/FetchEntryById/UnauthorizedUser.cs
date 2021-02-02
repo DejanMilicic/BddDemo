@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
 using Digitalis;
@@ -22,12 +23,16 @@ namespace Specs.Features.FetchEntryById
 
         public UnauthorizedUser(WebApplicationFactory<Startup> factory) : base(factory)
         {
-            var creatorClient = this.CreateAuthenticatedClient(new []
+            var creatorClient = AuthClient(new Dictionary<string, string>
                 {
-                    new Claim(AppClaims.CreateNewEntry, "")
+                    { "email", "john@doe.com" },
+                    { AppClaims.CreateNewEntry, "" }
                 });
 
-            var readerClient = this.CreateAuthenticatedClient();
+            var readerClient = AuthClient(new Dictionary<string, string>
+                {
+                    { "email", "john@doe.com" }
+                });
 
             _newEntry = new CreateEntry.Command(new[] { "tag1", "tag2", "tag3" });
 

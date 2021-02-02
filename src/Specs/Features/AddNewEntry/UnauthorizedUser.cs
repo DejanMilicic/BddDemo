@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Security.Claims;
 using Digitalis;
 using Digitalis.Features;
 using Digitalis.Models;
