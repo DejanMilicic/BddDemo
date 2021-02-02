@@ -23,6 +23,7 @@ namespace Specs.Features.AddNewEntry
         {
             var client = AuthClient(new Dictionary<string, string>
                 {
+                    { "email", "john@doe.com" },
                     { "CreateNewEntry", "" }
                 });
 
