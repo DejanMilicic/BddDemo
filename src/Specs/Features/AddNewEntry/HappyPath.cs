@@ -1,17 +1,14 @@
-﻿using System;
-using System.Linq;
-using System.Net.Http;
-using System.Security.Claims;
-using Digitalis;
+﻿using Digitalis;
 using Digitalis.Features;
-using Digitalis.Infrastructure;
 using Digitalis.Models;
 using FakeItEasy;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 using Specs.Infrastructure;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 using Xunit;
 
 namespace Specs.Features.AddNewEntry
@@ -24,9 +21,9 @@ namespace Specs.Features.AddNewEntry
 
         public HappyPath(WebApplicationFactory<Startup> factory) : base(factory)
         {
-            var client = this.CreateAuthenticatedClient(new []
+            var client = AuthClient(new Dictionary<string, string>
                 {
-                    new Claim(AppClaims.CreateNewEntry, "")
+                    { "CreateNewEntry", "" }
                 });
 
             _newEntry = new CreateEntry.Command(new[] { "tag1", "tag2", "tag3" });

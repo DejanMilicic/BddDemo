@@ -21,6 +21,8 @@ using System.Security.Cryptography.X509Certificates;
 using Digitalis.Infrastructure.Mediatr;
 using Digitalis.Infrastructure.OpenApi;
 using Digitalis.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Context;
 using Serilog.Core.Enrichers;
@@ -39,6 +41,22 @@ namespace Digitalis
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(x =>
+                {
+                    x.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        //IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateIssuerSigningKey = false,
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        //ValidIssuer = "localhost",
+                        //ValidAudience = "localhost"
+                    };
+                });
+            services.AddAuthorization();
+
             services.AddHealthChecks();
             services.AddControllers()
                 .AddFluentValidation(s => s.RegisterValidatorsFromAssemblyContaining<Startup>());
@@ -71,8 +89,7 @@ namespace Digitalis
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizerPipelineBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorPipelineBehavior<,>));
 
-            services.AddAuthorization();
-            services.AddAuthentication();
+
 
             services.Scan(
                 x =>
