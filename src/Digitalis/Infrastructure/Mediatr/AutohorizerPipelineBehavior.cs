@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Authentication;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -29,6 +30,15 @@ namespace Digitalis.Infrastructure.Mediatr
                     throw new AuthenticationException();
 
                 if ((bool)!_ctx.HttpContext?.User.Identity.IsAuthenticated)
+                    throw new AuthenticationException();
+
+                var ci = _ctx.HttpContext?.User.Identity as ClaimsIdentity;
+                if (ci == null) throw new AuthenticationException();
+
+                var emailClaim = ci.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Email);
+                if (emailClaim == null) throw new AuthenticationException();
+
+                if (String.IsNullOrEmpty(emailClaim.Value))
                     throw new AuthenticationException();
 
                 // Invoke the authorizers
