@@ -14,7 +14,7 @@ namespace Digitalis.Features
 {
     public class CreateUser
     {
-        public record Command(Dictionary<string, string> Claims) : IRequest<string>;
+        public record Command(string email/*, Dictionary<string, string> Claims*/) : IRequest<string>;
 
         public class Auth : Auth<Command>
         {
@@ -42,7 +42,11 @@ namespace Digitalis.Features
             public async Task<string> Handle(Command command, CancellationToken cancellationToken)
             {
                 User user = new User();
-
+                user.Email = command.email;
+                user.Claims = new List<(string, string)>
+                {
+                    (AppClaims.CreateNewEntry, "")
+                };
 
                 await _session.StoreAsync(user, cancellationToken);
                 await _session.SaveChangesAsync(cancellationToken);
