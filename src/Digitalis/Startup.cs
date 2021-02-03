@@ -89,8 +89,6 @@ namespace Digitalis
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizerPipelineBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorPipelineBehavior<,>));
 
-
-
             services.Scan(
                 x =>
                 {
