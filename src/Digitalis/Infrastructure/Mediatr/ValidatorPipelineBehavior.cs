@@ -18,6 +18,9 @@ namespace Digitalis.Infrastructure.Mediatr
 
         public Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
         {
+            if (_validators == null) return next();
+            if (!_validators.Any()) return next();
+
             // Invoke the validators
             var failures = _validators
                 .Select(validator => validator.Validate(request))
