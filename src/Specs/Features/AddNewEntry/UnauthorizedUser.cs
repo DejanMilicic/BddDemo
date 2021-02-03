@@ -4,7 +4,6 @@ using System.Net;
 using System.Net.Http;
 using Digitalis;
 using Digitalis.Features;
-using Digitalis.Infrastructure;
 using Digitalis.Models;
 using FakeItEasy;
 using FluentAssertions;
