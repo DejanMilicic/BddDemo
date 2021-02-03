@@ -5,14 +5,11 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Mime;
-using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 using Digitalis;
 using Digitalis.Services;
 using FakeItEasy;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -70,38 +67,6 @@ namespace Specs.Infrastructure
             }
         }
 
-        public HttpClient CreateAuthenticatedClient(IEnumerable<Claim> claims = null)
-        {
-            claims ??= Enumerable.Empty<Claim>();
-
-            return this.Factory.WithWebHostBuilder(builder =>
-            {
-                 builder.ConfigureTestServices(services =>
-                 {
-                     services.AddControllers(
-                         options =>
-                         {
-                             options.Filters.Add(new FakeUserFilter(claims));
-                         });
-
-                     services.AddSingleton<IDocumentStore>(Store);
-                     services.AddTransient<IMailer>(sp => Mailer);
-                 });
-            }).CreateClient();
-        }
-
-        public HttpClient CreateAnonymousClient()
-        {
-            return this.Factory.WithWebHostBuilder(builder =>
-            {
-                 builder.ConfigureTestServices(services =>
-                 {
-                     services.AddSingleton<IDocumentStore>(Store);
-                     services.AddTransient<IMailer>(sp => Mailer);
-                 });
-            }).CreateClient();
-        }
-
         public IHost SetupHost()
         {
             return new HostBuilder()
@@ -135,22 +100,6 @@ namespace Specs.Infrastructure
 
             string content = response.Content.ReadAsStringAsync().Result;
             return JsonConvert.DeserializeObject<T>(content);
-        }
-    }
-
-    public class FakeUserFilter : IAsyncActionFilter
-    {
-        private readonly IEnumerable<Claim> _claims;
-
-        public FakeUserFilter(IEnumerable<Claim> claims)
-        {
-            _claims = claims;
-        }
-
-        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
-        {
-            context.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity(_claims, "TestAuthType"));
-            await next();
         }
     }
 }

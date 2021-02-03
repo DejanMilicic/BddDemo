@@ -21,7 +21,7 @@ namespace Specs.Features.AddNewEntry
 
         public AnonUser(WebApplicationFactory<Startup> factory) : base(factory)
         {
-            var client = this.CreateAnonymousClient();
+            var client = Client();
 
             _newEntry = new CreateEntry.Command(new[] { "tag1", "tag2", "tag3" });
 
