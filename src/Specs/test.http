@@ -1,0 +1,8 @@
+POST http://localhost:51665/entry
+content-type: application/json
+Authorization: Bearer xxx
+
+{
+    "tags": [ "test" ]
+}
+
