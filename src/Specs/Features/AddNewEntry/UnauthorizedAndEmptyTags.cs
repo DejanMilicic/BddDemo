@@ -27,9 +27,18 @@ namespace Specs.Features.AddNewEntry
 
         public UnauthorizedAndEmptyTags(WebApplicationFactory<Startup> factory) : base(factory)
         {
+            User user = new User
+            {
+                Email = "admin@app.com"
+            };
+
+            using var session = Store.OpenSession();
+            session.Store(user);
+            session.SaveChanges();
+
             var client = AuthClient(new Dictionary<string, string>
             {
-                { "email", "john@doe.com" }
+                { "email", user.Email }
             });
 
             _newEntry = new CreateEntry.Command(new string[] { });

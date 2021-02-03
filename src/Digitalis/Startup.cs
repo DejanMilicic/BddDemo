@@ -18,6 +18,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+using Digitalis.Features;
 using Digitalis.Infrastructure.Mediatr;
 using Digitalis.Infrastructure.OpenApi;
 using Digitalis.Services;
@@ -86,16 +87,16 @@ namespace Digitalis
 
             services.AddMediatR(typeof(Startup));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingPipelineBehavior<,>));
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizerPipelineBehavior<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthPipelineBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorPipelineBehavior<,>));
+
+            var entryAssembly = Assembly.GetAssembly(typeof(Startup));
 
             services.Scan(
                 x =>
                 {
-                    var entryAssembly = Assembly.GetAssembly(typeof(Startup));
-
                     x.FromAssemblies(entryAssembly)
-                        .AddClasses(classes => classes.AssignableTo(typeof(IAuthorizer<>)))
+                        .AddClasses(classes => classes.AssignableTo(typeof(IAuth<>)))
                         .AsImplementedInterfaces()
                         .WithScopedLifetime();
                 });
@@ -103,8 +104,6 @@ namespace Digitalis
             services.Scan(
                 x =>
                 {
-                    var entryAssembly = Assembly.GetAssembly(typeof(Startup));
-
                     x.FromAssemblies(entryAssembly)
                         .AddClasses(classes => classes.AssignableTo(typeof(AbstractValidator<>)))
                         .AsImplementedInterfaces()

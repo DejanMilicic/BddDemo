@@ -24,10 +24,19 @@ namespace Specs.Features.AddNewEntry
 
         public EmptyTags(WebApplicationFactory<Startup> factory) : base(factory)
         {
+            User user = new User
+            {
+                Email = "admin@app.com",
+                Claims = new List<(string, string)> { (AppClaims.CreateNewEntry, "") }
+            };
+
+            using var session = Store.OpenSession();
+            session.Store(user);
+            session.SaveChanges();
+
             var client = AuthClient(new Dictionary<string, string>
             {
-                { "email", "john@doe.com" },
-                { AppClaims.CreateNewEntry, "" }
+                { "email", user.Email }
             });
 
             _newEntry = new CreateEntry.Command(new string[] { });

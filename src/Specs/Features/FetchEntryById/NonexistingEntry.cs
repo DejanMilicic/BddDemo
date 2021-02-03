@@ -19,10 +19,19 @@ namespace Specs.Features.FetchEntryById
 
         public NonexistingEntry(WebApplicationFactory<Startup> factory) : base(factory)
         {
+            User user = new User
+            {
+                Email = "admin@app.com",
+                Claims = new List<(string, string)> { (AppClaims.FetchEntry, "") }
+            };
+
+            using var session = Store.OpenSession();
+            session.Store(user);
+            session.SaveChanges();
+
             var readerClient = AuthClient(new Dictionary<string, string>
                 {
-                    { "email", "john@doe.com" },
-                    { AppClaims.FetchEntry, "" }
+                    { "email", user.Email }
                 });
 
             _response = readerClient.GetAsync($"/entry?id=NONEXISTING").Result;

@@ -22,16 +22,24 @@ namespace Specs.Features.FetchEntryById
 
         public EmptyId(WebApplicationFactory<Startup> factory) : base(factory)
         {
+            User user = new User
+            {
+                Email = "admin@app.com",
+                Claims = new List<(string, string)> { (AppClaims.CreateNewEntry, ""), (AppClaims.FetchEntry, "") }
+            };
+
+            using var session = Store.OpenSession();
+            session.Store(user);
+            session.SaveChanges();
+
             var creatorClient = AuthClient(new Dictionary<string, string>
             {
-                { "email", "john@doe.com" },
-                { AppClaims.CreateNewEntry, "" }
+                { "email", user.Email }
             });
 
             var readerClient = AuthClient(new Dictionary<string, string>
             {
-                { "email", "john@doe.com" },
-                { AppClaims.FetchEntry, "" }
+                { "email", user.Email }
             });
 
             _newEntry = new CreateEntry.Command(new[] { "tag1", "tag2", "tag3" });

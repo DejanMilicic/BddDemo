@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Digitalis.Infrastructure;
+using Digitalis.Infrastructure.Guards;
 using Digitalis.Infrastructure.Mediatr;
 using Digitalis.Models;
 using Digitalis.Services;
@@ -18,18 +18,15 @@ namespace Digitalis.Features
     {
         public record Command(string[] Tags) : IRequest<string>;
 
-        public class Authorizer : IAuthorizer<Command>
+        public class Auth : Auth<Command>
         {
-            private readonly ClaimsIdentity _claimsIdentity;
-
-            public Authorizer(IHttpContextAccessor htx)
+            public Auth(IHttpContextAccessor ctx, IDocumentSession session) : base(ctx, session)
             {
-                _claimsIdentity = htx.HttpContext?.User.Identity as ClaimsIdentity;
             }
 
-            public bool IsAuthorized(Command request)
+            public override void Authorize(Command request)
             {
-                return _claimsIdentity.HasClaim(AppClaims.CreateNewEntry, "");
+                AuthorizationGuard.AffirmClaim(User, AppClaims.CreateNewEntry);
             }
         }
 

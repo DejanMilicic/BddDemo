@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Digitalis.Infrastructure;
+using Digitalis.Infrastructure.Guards;
 using Digitalis.Infrastructure.Mediatr;
 using Digitalis.Models;
 using FluentValidation;
@@ -16,18 +16,15 @@ namespace Digitalis.Features
     {
         public record Query(string id) : IRequest<Entry>;
 
-        public class Authorizer : IAuthorizer<Query>
+        public class Auth : Auth<Query>
         {
-            private readonly ClaimsIdentity _claimsIdentity;
-
-            public Authorizer(IHttpContextAccessor htx)
+            public Auth(IHttpContextAccessor ctx, IDocumentSession session) : base(ctx, session)
             {
-                _claimsIdentity = htx.HttpContext?.User.Identity as ClaimsIdentity;
             }
 
-            public bool IsAuthorized(Query request)
+            public override void Authorize(Query request)
             {
-                return _claimsIdentity.HasClaim(AppClaims.FetchEntry, "");
+                AuthorizationGuard.AffirmClaim(User, AppClaims.FetchEntry);
             }
         }
 

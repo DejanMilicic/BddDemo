@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using Digitalis;
 using Digitalis.Features;
+using Digitalis.Infrastructure;
 using Digitalis.Models;
 using FakeItEasy;
 using FluentAssertions;
@@ -22,9 +23,18 @@ namespace Specs.Features.AddNewEntry
 
         public UnauthorizedUser(WebApplicationFactory<Startup> factory) : base(factory)
         {
+            User user = new User
+            {
+                Email = "admin@app.com"
+            };
+
+            using var session = Store.OpenSession();
+            session.Store(user);
+            session.SaveChanges();
+
             var client = AuthClient(new Dictionary<string, string>
             {
-                { "email", "john@doe.com" }
+                { "email", user.Email }
             });
 
             _newEntry = new CreateEntry.Command(new[] { "tag1", "tag2", "tag3" });
