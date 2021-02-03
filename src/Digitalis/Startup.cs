@@ -21,6 +21,7 @@ using System.Security.Cryptography.X509Certificates;
 using Digitalis.Infrastructure.Mediatr;
 using Digitalis.Infrastructure.OpenApi;
 using Digitalis.Services;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -58,8 +59,7 @@ namespace Digitalis
             services.AddAuthorization();
 
             services.AddHealthChecks();
-            services.AddControllers()
-                .AddFluentValidation(s => s.RegisterValidatorsFromAssemblyContaining<Startup>());
+            services.AddControllers();
 
             services.AddSingleton<IDocumentStore>(_ =>
             {
@@ -100,6 +100,17 @@ namespace Digitalis
                         .WithScopedLifetime();
                 });
 
+            services.Scan(
+                x =>
+                {
+                    var entryAssembly = Assembly.GetAssembly(typeof(Startup));
+
+                    x.FromAssemblies(entryAssembly)
+                        .AddClasses(classes => classes.AssignableTo(typeof(AbstractValidator<>)))
+                        .AsImplementedInterfaces()
+                        .WithScopedLifetime();
+                });
+
             services.AddTransient<IMailer, Mailer>();
 
             services.AddProblemDetails(ConfigureProblemDetails);
@@ -109,6 +120,8 @@ namespace Digitalis
                 settings.SchemaNameGenerator = new CustomSchemaNameGenerator();
                 settings.Title = App.Title;
             });
+
+            services.AddHttpContextAccessor();
         }
 
         private void ConfigureProblemDetails(ProblemDetailsOptions options)
