@@ -35,13 +35,21 @@ namespace Digitalis.Infrastructure.Mediatr
             var ci = _ctx.HttpContext?.User.Identity as ClaimsIdentity;
             AuthenticationGuard.AgainstNull(ci);
 
-            var emailClaim = ci.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Email);
+            Claim? emailClaim = ci.Claims.SingleOrDefault(c => c.Type == "email") 
+                                ?? ci.Claims.SingleOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress");
             AuthenticationGuard.AgainstNull(emailClaim);
-            AuthenticationGuard.AgainstNullOrEmpty(emailClaim.Value);
 
             Email = emailClaim.Value;
+            AuthenticationGuard.AgainstNullOrEmpty(Email);
 
             User = Session.Query<User>().SingleOrDefault(x => x.Email == Email);
+            if (User == null)
+            {
+                User = new User {Email = Email};
+                Session.Store(User);
+                Session.SaveChanges();
+            }
+
             AuthenticationGuard.AgainstNull(User);
         }
 
