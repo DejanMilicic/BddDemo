@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
 using Digitalis;
@@ -21,15 +22,17 @@ namespace Specs.Features.FetchEntryById
 
         public EmptyId(WebApplicationFactory<Startup> factory) : base(factory)
         {
-            var creatorClient = this.CreateAuthenticatedClient(new []
-                {
-                    new Claim(AppClaims.CreateNewEntry, "")
-                });
+            var creatorClient = AuthClient(new Dictionary<string, string>
+            {
+                { "email", "john@doe.com" },
+                { AppClaims.CreateNewEntry, "" }
+            });
 
-            var readerClient = this.CreateAuthenticatedClient(new []
-                {
-                    new Claim(AppClaims.FetchEntry, "")
-                });
+            var readerClient = AuthClient(new Dictionary<string, string>
+            {
+                { "email", "john@doe.com" },
+                { AppClaims.FetchEntry, "" }
+            });
 
             _newEntry = new CreateEntry.Command(new[] { "tag1", "tag2", "tag3" });
 

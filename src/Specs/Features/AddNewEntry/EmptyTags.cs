@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
@@ -23,10 +24,11 @@ namespace Specs.Features.AddNewEntry
 
         public EmptyTags(WebApplicationFactory<Startup> factory) : base(factory)
         {
-            var client = this.CreateAuthenticatedClient(new[]
-                {
-                    new Claim(AppClaims.CreateNewEntry, "")
-                });
+            var client = AuthClient(new Dictionary<string, string>
+            {
+                { "email", "john@doe.com" },
+                { AppClaims.CreateNewEntry, "" }
+            });
 
             _newEntry = new CreateEntry.Command(new string[] { });
 
