@@ -18,6 +18,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using Digitalis.Features;
 using Digitalis.Infrastructure.Mediatr;
 using Digitalis.Infrastructure.OpenApi;
@@ -45,19 +46,7 @@ namespace Digitalis
         {
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(x =>
-                {
-                    x.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        //IssuerSigningKey = new SymmetricSecurityKey(key),
-                        ValidateIssuerSigningKey = false,
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        //ValidIssuer = "localhost",
-                        //ValidAudience = "localhost"
-                    };
-                });
-            services.AddAuthorization();
+                .AddJwtBearer(jwt => jwt.UseGoogle(clientId: "client_id"));
 
             services.AddHealthChecks();
             services.AddControllers();
@@ -167,7 +156,6 @@ namespace Digitalis
             app.UseRouting();
 
             app.UseAuthentication();
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
