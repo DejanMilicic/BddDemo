@@ -3,7 +3,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
+using FluentValidation.Results;
 using MediatR;
+using Newtonsoft.Json;
 
 namespace Digitalis.Infrastructure.Mediatr
 {
@@ -27,7 +29,17 @@ namespace Digitalis.Infrastructure.Mediatr
 
             if (failures.Length > 0)
             {
-                throw new ValidationException(failures);
+                var projection = failures.Select(
+                    failure => new ValidationFailure(
+                        failure.PropertyName,
+                        JsonConvert.SerializeObject(new
+                        {
+                            message = failure.ErrorMessage,
+                            code = failure.ErrorCode,
+                            state = failure.CustomState
+                        })));
+
+                throw new ValidationException(projection);
             }
 
             // Invoke the next handler
