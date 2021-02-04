@@ -28,14 +28,11 @@ namespace Specs.Infrastructure
     public class Fixture : RavenTestDriver, IClassFixture<WebApplicationFactory<Startup>>
     {
         protected readonly IDocumentStore Store;
-        protected readonly WebApplicationFactory<Startup> Factory;
         protected readonly IMailer Mailer;
         protected readonly TestServer TestServer;
 
-        public Fixture(WebApplicationFactory<Startup> factory)
+        public Fixture()
         {
-            Factory = factory;
-
             Mailer = A.Fake<IMailer>();
 
             Store = this.GetDocumentStore();

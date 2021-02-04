@@ -19,7 +19,7 @@ namespace Specs.Features.FetchEntryById
         private readonly string _newEntryId;
         private readonly Entry _fetchedEntry;
 
-        public HappyPath(WebApplicationFactory<Startup> factory) : base(factory)
+        public HappyPath()
         {
             User user = new User
             {

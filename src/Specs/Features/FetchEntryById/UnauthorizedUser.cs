@@ -21,7 +21,7 @@ namespace Specs.Features.FetchEntryById
         private readonly string _newEntryId;
         private readonly Entry _fetchedEntry;
 
-        public UnauthorizedUser(WebApplicationFactory<Startup> factory) : base(factory)
+        public UnauthorizedUser()
         {
             User user = new User
             {
