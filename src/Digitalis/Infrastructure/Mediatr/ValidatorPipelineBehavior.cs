@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
@@ -29,44 +27,12 @@ namespace Digitalis.Infrastructure.Mediatr
 
             if (failures.Length > 0)
             {
-                // Map the validation failures and throw an error,
-                // this stops the execution of the request
-                var errors = failures
-                    .GroupBy(x => x.PropertyName)
-                    .ToDictionary(k => k.Key, v => v.Select(x => x.ErrorMessage).ToArray());
-                throw new InputValidationException(errors);
+                throw new ValidationException(failures);
             }
 
             // Invoke the next handler
             // (can be another pipeline behavior or the request handler)
             return next();
-        }
-    }
-
-    [Serializable]
-    internal class InputValidationException : Exception
-    {
-        private Dictionary<string, string[]> errors;
-
-        public InputValidationException()
-        {
-        }
-
-        public InputValidationException(Dictionary<string, string[]> errors)
-        {
-            this.errors = errors;
-        }
-
-        public InputValidationException(string message) : base(message)
-        {
-        }
-
-        public InputValidationException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
-
-        protected InputValidationException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
         }
     }
 }

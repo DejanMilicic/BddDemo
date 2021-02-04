@@ -119,7 +119,7 @@ namespace Digitalis
             options.MapToStatusCode<NotImplementedException>(StatusCodes.Status501NotImplemented);
             options.MapToStatusCode<AuthenticationException>(StatusCodes.Status401Unauthorized);
             options.MapToStatusCode<UnauthorizedAccessException>(StatusCodes.Status403Forbidden);
-            options.MapToStatusCode<InputValidationException>(StatusCodes.Status400BadRequest);
+            options.MapToStatusCode<ValidationException>(StatusCodes.Status400BadRequest);
             options.MapToStatusCode<KeyNotFoundException>(StatusCodes.Status404NotFound);
 
             options.MapToStatusCode<HttpRequestException>(StatusCodes.Status503ServiceUnavailable);
