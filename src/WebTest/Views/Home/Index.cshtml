@@ -1,15 +1,27 @@
-﻿@{
-    ViewData["Title"] = "Home Page";    
+﻿@using Hanssens.Net;
+
+@{
+
+    ViewData["Title"] = "Home Page";
+    var storage = new LocalStorage();
+    var jwtToken = storage.Exists("jwtToken") ? storage.Get("jwtToken").ToString() : "";
+    var isAuthenticated = storage.Exists("jwtToken") && !string.IsNullOrEmpty(jwtToken);
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>   
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 
 
-    <input type="button" class="btn btn-primary" title="Delete" value="Continue with Google" onclick="location.href='@Url.Action("GoogleAuth", "Home")'" />
-
+    @if (isAuthenticated)
+    {
+        <input type="button" class="btn btn-primary" value="Create Entry" onclick="location.href='@Url.Action("CreateEntry", "Home")'" />
+        <input type="button" class="btn btn-primary" value="Logout" onclick="location.href='@Url.Action("Logout", "Home")'" />
+    }
+    else
+    {
+        <input type="button" class="btn btn-primary" value="Continue with Google" onclick="location.href='@Url.Action("GoogleAuth", "Home")'" />
+    }
 
     <h1>@ViewBag.CreatedEntryId</h1>
-
 </div>

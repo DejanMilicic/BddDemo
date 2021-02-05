@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Hanssens.Net;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
@@ -42,17 +43,46 @@ namespace WebTest.Controllers
             string clientSecret = _config.GetSection("GoogleData").GetSection("ClientSecret").Value;
             string redirectUrl = "https://localhost:44366/home/authentication";
 
-            var url = $"https://accounts.google.com/o/oauth2/v2/auth?redirect_uri={redirectUrl}&prompt=consent&response_type=code&client_id={clientId}&scope=profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&access_type=offline";            
+            var url = $"https://accounts.google.com/o/oauth2/v2/auth?redirect_uri={redirectUrl}&prompt=consent&response_type=code&client_id={clientId}&scope=profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&access_type=offline";
             return Redirect(url);
         }
 
         public IActionResult Authentication(string code)
         {
-            using (var client = new HttpClient())
+            var storage = new LocalStorage();
+            if (!storage.Exists("jwtToken") || string.IsNullOrEmpty(storage.Get("jwtToken").ToString()))
             {
-                var jwtToken = GetGoogleToken(code, client);
+                using (var client = new HttpClient())
+                {
+                    var jwtToken = GetGoogleToken(code, client);
+                    storage.Store("jwtToken", jwtToken);
+                    storage.Persist();
+                }
+            }
 
-                if (!string.IsNullOrEmpty(jwtToken))
+            return Redirect("Index");
+        }
+
+        public IActionResult Logout()
+        {
+            var storage = new LocalStorage();
+            if (storage.Exists("jwtToken"))
+            {
+                storage.Store("jwtToken", "");
+                storage.Persist();
+            }
+
+            return Redirect("Index");
+        }
+
+        public IActionResult CreateEntry()
+        {
+            var storage = new LocalStorage();
+            var jwtToken = storage.Get("jwtToken").ToString();
+
+            if (!string.IsNullOrEmpty(jwtToken))
+            {
+                using (var client = new HttpClient())
                 {
                     var newEntry = new
                     {
