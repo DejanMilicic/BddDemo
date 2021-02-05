@@ -22,6 +22,7 @@ using System.Text;
 using Digitalis.Features;
 using Digitalis.Infrastructure.Mediatr;
 using Digitalis.Infrastructure.OpenApi;
+using Digitalis.Infrastructure.Services;
 using Digitalis.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -67,6 +68,9 @@ namespace Digitalis
                 store.Initialize();
 
                 IndexCreation.CreateIndexes(typeof(Startup).Assembly, store);
+
+                DbSeeding dbs = new DbSeeding();
+                dbs.Setup(store, Configuration.GetSection("SuperAdmin").Get<string>());
 
                 return store;
             });

@@ -14,5 +14,7 @@
 
             public string CertPass { get; set; }
         }
+
+        public string SuperAdmin { get; set; }
     }
 }
