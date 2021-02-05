@@ -1,0 +1,15 @@
+﻿@{
+    ViewData["Title"] = "Home Page";    
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>   
+
+
+    <input type="button" class="btn btn-primary" title="Delete" value="Continue with Google" onclick="location.href='@Url.Action("GoogleAuth", "Home")'" />
+
+
+    <h1>@ViewBag.CreatedEntryId</h1>
+
+</div>

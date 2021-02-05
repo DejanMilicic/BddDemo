@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Digitalis", "Digitalis\Digitalis.csproj", "{8D54E4BE-2666-44EF-A3EB-65AEF2811CF8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Specs", "Specs\Specs.csproj", "{F7D140B3-4B40-4544-8941-83B67A73F69D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Specs", "Specs\Specs.csproj", "{F7D140B3-4B40-4544-8941-83B67A73F69D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebTest", "WebTest\WebTest.csproj", "{77D51649-A908-41EE-A1FE-ED415CE7273E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{F7D140B3-4B40-4544-8941-83B67A73F69D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7D140B3-4B40-4544-8941-83B67A73F69D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7D140B3-4B40-4544-8941-83B67A73F69D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77D51649-A908-41EE-A1FE-ED415CE7273E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77D51649-A908-41EE-A1FE-ED415CE7273E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77D51649-A908-41EE-A1FE-ED415CE7273E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77D51649-A908-41EE-A1FE-ED415CE7273E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

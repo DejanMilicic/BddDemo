@@ -26,7 +26,7 @@ namespace Digitalis.Features
 
             public override void Authorize(Command request)
             {
-                AuthorizationGuard.AffirmClaim(User, AppClaims.CreateNewEntry);
+                //AuthorizationGuard.AffirmClaim(User, AppClaims.CreateNewEntry);
             }
         }
 
