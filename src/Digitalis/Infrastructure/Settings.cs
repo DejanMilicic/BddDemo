@@ -3,6 +3,10 @@
     public class Settings
     {
         public DatabaseSettings Database { get; set; }
+        
+        public string SuperAdmin { get; set; }
+
+        public GoogleSettings Google { get; set; }
 
         public class DatabaseSettings
         {
@@ -15,6 +19,9 @@
             public string CertPass { get; set; }
         }
 
-        public string SuperAdmin { get; set; }
+        public class GoogleSettings
+        {
+            public string ClientId { get; set; }
+        }
     }
 }
