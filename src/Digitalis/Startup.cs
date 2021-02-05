@@ -46,7 +46,7 @@ namespace Digitalis
         {
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(jwt => jwt.UseGoogle(clientId: "862194400783-128gj3m1j52gs6lrl6ueeehtgaiqq8q8.apps.googleusercontent.com"));
+                .AddJwtBearer(jwt => jwt.UseGoogle(clientId: "client_id"));
 
             services.AddHealthChecks();
             services.AddControllers();
