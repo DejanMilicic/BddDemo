@@ -20,7 +20,7 @@ namespace Specs.Features.FetchEntryById
         private readonly string _newEntryId;
         private readonly Entry _fetchedEntry;
 
-        public AnonUser(WebApplicationFactory<Startup> factory) : base(factory)
+        public AnonUser()
         {
             User user = new User
             {

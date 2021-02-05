@@ -25,7 +25,7 @@ namespace Specs.Features.AddNewEntry
         private readonly HttpResponseMessage _response;
         private readonly CreateEntry.Command _newEntry;
 
-        public UnauthorizedAndEmptyTags(WebApplicationFactory<Startup> factory) : base(factory)
+        public UnauthorizedAndEmptyTags()
         {
             User user = new User
             {

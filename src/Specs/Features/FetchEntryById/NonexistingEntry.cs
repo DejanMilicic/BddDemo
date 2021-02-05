@@ -17,7 +17,7 @@ namespace Specs.Features.FetchEntryById
         private readonly HttpResponseMessage _response;
         private readonly Entry _fetchedEntry;
 
-        public NonexistingEntry(WebApplicationFactory<Startup> factory) : base(factory)
+        public NonexistingEntry()
         {
             User user = new User
             {

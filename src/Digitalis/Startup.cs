@@ -1,8 +1,6 @@
 using Digitalis.Infrastructure;
-using FluentValidation.AspNetCore;
 using Hellang.Middleware.ProblemDetails;
 using MediatR;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -18,14 +16,12 @@ using System.Net.Http;
 using System.Reflection;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using Digitalis.Features;
 using Digitalis.Infrastructure.Mediatr;
 using Digitalis.Infrastructure.OpenApi;
+using Digitalis.Infrastructure.Services;
 using Digitalis.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Context;
 using Serilog.Core.Enrichers;
@@ -44,9 +40,10 @@ namespace Digitalis
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            string clientId = Configuration.GetSection("Google").Get<Settings.GoogleSettings>().ClientId;
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(jwt => jwt.UseGoogle(clientId: "client_id"));
+                .AddJwtBearer(jwt => jwt.UseGoogle(clientId: clientId));
 
             services.AddHealthChecks();
             services.AddControllers();
@@ -67,6 +64,9 @@ namespace Digitalis
                 store.Initialize();
 
                 IndexCreation.CreateIndexes(typeof(Startup).Assembly, store);
+
+                DbSeeding dbs = new DbSeeding();
+                dbs.Setup(store, Configuration.GetSection("SuperAdmin").Get<string>());
 
                 return store;
             });
@@ -119,7 +119,7 @@ namespace Digitalis
             options.MapToStatusCode<NotImplementedException>(StatusCodes.Status501NotImplemented);
             options.MapToStatusCode<AuthenticationException>(StatusCodes.Status401Unauthorized);
             options.MapToStatusCode<UnauthorizedAccessException>(StatusCodes.Status403Forbidden);
-            options.MapToStatusCode<InputValidationException>(StatusCodes.Status400BadRequest);
+            options.MapToStatusCode<ValidationException>(StatusCodes.Status400BadRequest);
             options.MapToStatusCode<KeyNotFoundException>(StatusCodes.Status404NotFound);
 
             options.MapToStatusCode<HttpRequestException>(StatusCodes.Status503ServiceUnavailable);

@@ -20,7 +20,7 @@ namespace Specs.Features.FetchEntryById
         private readonly CreateEntry.Command _newEntry;
         private readonly Entry _fetchedEntry;
 
-        public EmptyId(WebApplicationFactory<Startup> factory) : base(factory)
+        public EmptyId()
         {
             User user = new User
             {

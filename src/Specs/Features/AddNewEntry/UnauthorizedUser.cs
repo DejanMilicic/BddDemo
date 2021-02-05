@@ -20,7 +20,7 @@ namespace Specs.Features.AddNewEntry
         private readonly HttpResponseMessage _response;
         private readonly CreateEntry.Command _newEntry;
 
-        public UnauthorizedUser(WebApplicationFactory<Startup> factory) : base(factory)
+        public UnauthorizedUser()
         {
             User user = new User
             {

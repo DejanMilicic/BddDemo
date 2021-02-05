@@ -22,7 +22,7 @@ namespace Specs.Features.AddNewEntry
         private readonly HttpResponseMessage _response;
         private readonly CreateEntry.Command _newEntry;
 
-        public EmptyTags(WebApplicationFactory<Startup> factory) : base(factory)
+        public EmptyTags()
         {
             User user = new User
             {
