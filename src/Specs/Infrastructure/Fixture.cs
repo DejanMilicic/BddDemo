@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Net.Mime;
 using System.Text;
 using Digitalis;
+using Digitalis.Infrastructure;
 using Digitalis.Services;
 using FakeItEasy;
 using Microsoft.AspNetCore.Hosting;
@@ -72,6 +73,7 @@ namespace Specs.Infrastructure
                     webBuilder.UseStartup<Digitalis.Startup>().UseSerilog();
                     webBuilder
                         .UseTestServer()
+                        .UseSetting("Google:ClientId", "client_id")
                         .ConfigureTestServices(collection =>
                         {
                             collection.AddAuthentication(FakeJwtBearerDefaults.AuthenticationScheme).AddFakeJwtBearer();
