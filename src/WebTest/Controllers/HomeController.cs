@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Net.Http;
@@ -11,10 +12,12 @@ namespace WebTest.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IConfiguration _config;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IConfiguration config)
         {
             _logger = logger;
+            _config = config;
         }
 
         public IActionResult Index(string entryId)
@@ -35,7 +38,12 @@ namespace WebTest.Controllers
 
         public IActionResult GoogleAuth()
         {
-            return Redirect("https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=https://localhost:44366/home/authentication&prompt=consent&response_type=code&client_id=862194400783-128gj3m1j52gs6lrl6ueeehtgaiqq8q8.apps.googleusercontent.com&scope=profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&access_type=offline");
+            string clientId = _config.GetSection("GoogleData").GetSection("ClientId").Value;
+            string clientSecret = _config.GetSection("GoogleData").GetSection("ClientSecret").Value;
+            string redirectUrl = "https://localhost:44366/home/authentication";
+
+            var url = $"https://accounts.google.com/o/oauth2/v2/auth?redirect_uri={redirectUrl}&prompt=consent&response_type=code&client_id={clientId}&scope=profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&access_type=offline";            
+            return Redirect(url);
         }
 
         public IActionResult Authentication(string code)
@@ -69,12 +77,15 @@ namespace WebTest.Controllers
 
         private string GetGoogleToken(string code, HttpClient client)
         {
+            string clientId = _config.GetSection("GoogleData").GetSection("ClientId").Value;
+            string clientSecret = _config.GetSection("GoogleData").GetSection("ClientSecret").Value;
+
             var payload = new
             {
                 code = code,
                 grant_type = "authorization_code",
-                client_id = "862194400783-128gj3m1j52gs6lrl6ueeehtgaiqq8q8.apps.googleusercontent.com",
-                client_secret = "DSSIWDRHxViWR8ssUCLd1WaC",
+                client_id = clientId,
+                client_secret = clientSecret,
                 redirect_uri = "https://localhost:44366/home/authentication"
             };
 
