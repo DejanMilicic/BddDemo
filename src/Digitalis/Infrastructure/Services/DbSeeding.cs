@@ -14,6 +14,7 @@ namespace Digitalis.Infrastructure.Services
             if (superAdmin == null)
             {
                 superAdmin = new User();
+                superAdmin.Email = superAdminEmail;
                 superAdmin.Claims.Add((AppClaims.CreateNewEntry, ""));
 
                 session.Store(superAdmin);
