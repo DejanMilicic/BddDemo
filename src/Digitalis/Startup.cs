@@ -1,8 +1,6 @@
 using Digitalis.Infrastructure;
-using FluentValidation.AspNetCore;
 using Hellang.Middleware.ProblemDetails;
 using MediatR;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -18,15 +16,12 @@ using System.Net.Http;
 using System.Reflection;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using Digitalis.Features;
 using Digitalis.Infrastructure.Mediatr;
 using Digitalis.Infrastructure.OpenApi;
 using Digitalis.Infrastructure.Services;
 using Digitalis.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Context;
 using Serilog.Core.Enrichers;
@@ -47,7 +42,7 @@ namespace Digitalis
         {
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(jwt => jwt.UseGoogle(clientId: "client_id"));
+                .AddJwtBearer(jwt => jwt.UseGoogle(clientId: "819551507640-h8vl78cjafdrbgb5bd4ap04dru54p8dd.apps.googleusercontent.com"));
 
             services.AddHealthChecks();
             services.AddControllers();
