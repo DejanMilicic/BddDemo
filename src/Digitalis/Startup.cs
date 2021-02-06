@@ -76,13 +76,15 @@ namespace Digitalis
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthPipelineBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorPipelineBehavior<,>));
 
+            services.AddScoped<Authenticator>();
+
             var entryAssembly = Assembly.GetAssembly(typeof(Startup));
 
             services.Scan(
                 x =>
                 {
                     x.FromAssemblies(entryAssembly)
-                        .AddClasses(classes => classes.AssignableTo(typeof(IAuth<>)))
+                        .AddClasses(classes => classes.AssignableTo(typeof(IAuth<,>)))
                         .AsImplementedInterfaces()
                         .WithScopedLifetime();
                 });

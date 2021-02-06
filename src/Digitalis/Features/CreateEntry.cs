@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Digitalis.Infrastructure;
 using Digitalis.Infrastructure.Guards;
 using Digitalis.Infrastructure.Mediatr;
+using Digitalis.Infrastructure.Services;
 using Digitalis.Models;
 using Digitalis.Services;
 using FluentValidation;
@@ -16,17 +17,17 @@ namespace Digitalis.Features
 {
     public class CreateEntry
     {
-        public record Command(string[] Tags) : IRequest<string>;
-
-        public class Auth : Auth<Command>
+        public class Command : AuthRequest<string>
         {
-            public Auth(IHttpContextAccessor ctx, IDocumentStore store) : base(ctx, store)
-            {
-            }
+            public string[] Tags { get; set; }
+        }
 
-            public override void Authorize(Command request)
+        public class Auth : IAuth<Command, string>
+        {
+            public Auth(Authenticator authenticator)
             {
-                AuthorizationGuard.AffirmClaim(User, AppClaims.CreateNewEntry);
+                var user = authenticator.User;
+                AuthorizationGuard.AffirmClaim(user, AppClaims.CreateNewEntry);
             }
         }
 
@@ -42,11 +43,13 @@ namespace Digitalis.Features
         {
             private readonly IDocumentStore _store;
             private readonly IMailer _mailer;
+            private User _user;
 
-            public Handler(IDocumentStore store, IMailer mailer)
+            public Handler(IDocumentStore store, IMailer mailer, Authenticator auth)
             {
                 _store = store;
                 _mailer = mailer;
+                _user = auth.User;
             }
 
             public async Task<string> Handle(Command command, CancellationToken cancellationToken)

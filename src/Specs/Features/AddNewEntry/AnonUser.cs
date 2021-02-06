@@ -23,7 +23,7 @@ namespace Specs.Features.AddNewEntry
         {
             var client = Client();
 
-            _newEntry = new CreateEntry.Command(new[] { "tag1", "tag2", "tag3" });
+            _newEntry = new CreateEntry.Command { Tags = new[] { "tag1", "tag2", "tag3" }};
 
             _response = client.PostAsync("/entry",
                 Serialize(_newEntry)).Result;
