@@ -11,19 +11,18 @@ namespace Digitalis.Infrastructure.Mediatr
         where TRequest : AuthRequest<TResponse>
     {
         private readonly IEnumerable<IAuth<TRequest, TResponse>> _authorizers;
-        private Authenticator _user;
+        private Authenticator _authenticator;
 
-        public AuthPipelineBehavior(Authenticator user, IEnumerable<IAuth<TRequest, TResponse>> authorizers)
+        public AuthPipelineBehavior(Authenticator authenticator, IEnumerable<IAuth<TRequest, TResponse>> authorizers)
         {
             _authorizers = authorizers;
-            _user = user;
+            _authenticator = authenticator;
         }
 
         public Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
         {
             if (request is AuthRequest<TResponse> authRequest)
             {
-                _user.Authenticate();
                 foreach (IAuth<TRequest, TResponse> authorizer in _authorizers)
                 {
                     authorizer.Authorize(request);

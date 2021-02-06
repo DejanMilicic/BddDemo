@@ -24,12 +24,11 @@ namespace Digitalis.Features
 
         public class Auth : IAuth<Command, string>
         {
-            private User _user;
+            private readonly User _user;
 
-            public Auth(Authenticator user)
+            public Auth(Authenticator authenticator)
             {
-                user.Authenticate();
-                _user = user.User;
+                _user = authenticator.User;
             }
 
             public void Authorize(Command request)

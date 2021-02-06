@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Security.Claims;
 using Digitalis.Infrastructure.Guards;
 using Digitalis.Models;
@@ -9,7 +10,9 @@ namespace Digitalis.Infrastructure.Services
 {
     public class Authenticator
     {
-        public User User { get; private set; }
+        private Lazy<User> _user;
+
+        public User User => _user.Value;
 
         private readonly IHttpContextAccessor _ctx;
         private readonly IDocumentStore _store;
@@ -19,9 +22,11 @@ namespace Digitalis.Infrastructure.Services
         {
             _ctx = ctx;
             _store = store;
+
+            _user = new Lazy<User>(new Func<User>(() => AuthenticateUser()));
         }
 
-        public void Authenticate()
+        public User AuthenticateUser()
         {
             AuthenticationGuard.AgainstNull(_ctx.HttpContext?.User?.Identity);
             AuthenticationGuard.Affirm(_ctx.HttpContext?.User.Identity.IsAuthenticated);
@@ -37,15 +42,17 @@ namespace Digitalis.Infrastructure.Services
             AuthenticationGuard.AgainstNullOrEmpty(_email);
 
             using var session = _store.OpenSession();
-            User = session.Query<User>().SingleOrDefault(x => x.Email == _email);
-            if (User == null)
+            User user = session.Query<User>().SingleOrDefault(x => x.Email == _email);
+            if (user == null)
             {
-                User = new User { Email = _email };
+                user = new User { Email = _email };
                 session.Store(User);
                 session.SaveChanges();
             }
 
-            AuthenticationGuard.AgainstNull(User);
+            AuthenticationGuard.AgainstNull(user);
+
+            return user;
         }
     }
 }
