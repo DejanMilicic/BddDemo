@@ -8,6 +8,7 @@ using Digitalis.Models;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
 
 namespace Digitalis.Features
@@ -18,7 +19,7 @@ namespace Digitalis.Features
 
         public class Auth : Auth<Query>
         {
-            public Auth(IHttpContextAccessor ctx, IDocumentSession session) : base(ctx, session)
+            public Auth(IHttpContextAccessor ctx, IDocumentStore store) : base(ctx, store)
             {
             }
 
@@ -38,16 +39,17 @@ namespace Digitalis.Features
 
         public class Handler : IRequestHandler<Query, Entry>
         {
-            private readonly IAsyncDocumentSession _session;
+            private readonly IDocumentStore _store;
 
-            public Handler(IAsyncDocumentSession session)
+            public Handler(IDocumentStore store)
             {
-                _session = session;
+                _store = store;
             }
 
             public async Task<Entry> Handle(Query query, CancellationToken cancellationToken)
             {
-                Entry entry = await _session.LoadAsync<Entry>(query.id, cancellationToken);
+                using var session = _store.OpenAsyncSession(new SessionOptions{ NoTracking = true });
+                Entry entry = await session.LoadAsync<Entry>(query.id, cancellationToken);
 
                 if (entry == null)
                     throw new KeyNotFoundException();

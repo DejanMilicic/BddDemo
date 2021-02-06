@@ -8,7 +8,7 @@ using Digitalis.Models;
 using Digitalis.Services;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Raven.Client.Documents.Session;
+using Raven.Client.Documents;
 
 namespace Digitalis.Features
 {
@@ -18,7 +18,7 @@ namespace Digitalis.Features
 
         public class Auth : Auth<Command>
         {
-            public Auth(IHttpContextAccessor ctx, IDocumentSession session) : base(ctx, session)
+            public Auth(IHttpContextAccessor ctx, IDocumentStore store) : base(ctx, store)
             {
             }
 
@@ -30,12 +30,12 @@ namespace Digitalis.Features
 
         public class Handler : IRequestHandler<Command, string>
         {
-            private readonly IAsyncDocumentSession _session;
+            private readonly IDocumentStore _store;
             private readonly IMailer _mailer;
 
-            public Handler(IAsyncDocumentSession session, IMailer mailer)
+            public Handler(IDocumentStore store, IMailer mailer)
             {
-                _session = session;
+                _store = store;
                 _mailer = mailer;
             }
 
@@ -48,8 +48,9 @@ namespace Digitalis.Features
                     (AppClaims.CreateNewEntry, "")
                 };
 
-                await _session.StoreAsync(user, cancellationToken);
-                await _session.SaveChangesAsync(cancellationToken);
+                using var session = _store.OpenAsyncSession();
+                await session.StoreAsync(user, cancellationToken);
+                await session.SaveChangesAsync(cancellationToken);
 
                 _mailer.SendMail("admin@site.com", "New user created", "Email body...");
 

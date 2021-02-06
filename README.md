@@ -22,6 +22,6 @@ To get Google "client_id" for testing API:
 
 ---
 
-To register your application with Google API
+To register your application with Google API  
 
 https://console.developers.google.com/apis

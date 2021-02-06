@@ -71,9 +71,6 @@ namespace Digitalis
                 return store;
             });
 
-            services.AddScoped<IAsyncDocumentSession>(sp => sp.GetService<IDocumentStore>()?.OpenAsyncSession());
-            services.AddScoped<IDocumentSession>(sp => sp.GetService<IDocumentStore>()?.OpenSession());
-
             services.AddMediatR(typeof(Startup));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingPipelineBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthPipelineBehavior<,>));

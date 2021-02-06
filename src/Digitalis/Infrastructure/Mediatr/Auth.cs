@@ -3,7 +3,7 @@ using System.Security.Claims;
 using Digitalis.Infrastructure.Guards;
 using Digitalis.Models;
 using Microsoft.AspNetCore.Http;
-using Raven.Client.Documents.Session;
+using Raven.Client.Documents;
 
 namespace Digitalis.Infrastructure.Mediatr
 {
@@ -16,23 +16,23 @@ namespace Digitalis.Infrastructure.Mediatr
 
     public abstract class Auth<T> : IAuth<T>
     {
-        protected readonly IHttpContextAccessor _ctx;
-        protected readonly IDocumentSession Session;
+        protected readonly IHttpContextAccessor Ctx;
+        protected readonly IDocumentStore Store;
         protected string Email;
         protected User User;
 
-        protected Auth(IHttpContextAccessor ctx, IDocumentSession session)
+        protected Auth(IHttpContextAccessor ctx, IDocumentStore store)
         {
-            _ctx = ctx;
-            Session = session;
+            Ctx = ctx;
+            Store = store;
         }
 
         public void Authenticate(T request)
         {
-            AuthenticationGuard.AgainstNull(_ctx.HttpContext?.User?.Identity);
-            AuthenticationGuard.Affirm(_ctx.HttpContext?.User.Identity.IsAuthenticated);
+            AuthenticationGuard.AgainstNull(Ctx.HttpContext?.User?.Identity);
+            AuthenticationGuard.Affirm(Ctx.HttpContext?.User.Identity.IsAuthenticated);
 
-            var ci = _ctx.HttpContext?.User.Identity as ClaimsIdentity;
+            var ci = Ctx.HttpContext?.User.Identity as ClaimsIdentity;
             AuthenticationGuard.AgainstNull(ci);
 
             Claim? emailClaim = ci.Claims.SingleOrDefault(c => c.Type == "email") 
@@ -42,12 +42,13 @@ namespace Digitalis.Infrastructure.Mediatr
             Email = emailClaim.Value;
             AuthenticationGuard.AgainstNullOrEmpty(Email);
 
-            User = Session.Query<User>().SingleOrDefault(x => x.Email == Email);
+            using var session = Store.OpenSession();
+            User = session.Query<User>().SingleOrDefault(x => x.Email == Email);
             if (User == null)
             {
                 User = new User {Email = Email};
-                Session.Store(User);
-                Session.SaveChanges();
+                session.Store(User);
+                session.SaveChanges();
             }
 
             AuthenticationGuard.AgainstNull(User);
