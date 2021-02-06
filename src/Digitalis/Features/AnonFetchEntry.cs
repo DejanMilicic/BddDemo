@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Digitalis.Infrastructure;
-using Digitalis.Infrastructure.Guards;
 using Digitalis.Infrastructure.Mediatr;
-using Digitalis.Infrastructure.Services;
 using Digitalis.Models;
 using FluentValidation;
 using MediatR;
@@ -14,25 +11,9 @@ namespace Digitalis.Features
 {
     public class AnonFetchEntry
     {
-        public class Query : AuthRequest<Entry>
+        public class Query : AnonRequest<Entry>
         {
             public string Id { get; set; }
-        }
-
-        public class Auth : IAuth<Query, Entry>
-        {
-            private User _user;
-
-            public Auth(CurrentUser user)
-            {
-                user.Authenticate();
-                _user = user.User;
-            }
-
-            public void Authorize(Query request)
-            {
-                AuthorizationGuard.AffirmClaim(_user, AppClaims.FetchEntry);
-            }
         }
 
         public class Validator : AbstractValidator<Query>
