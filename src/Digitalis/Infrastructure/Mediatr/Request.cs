@@ -1,8 +1,6 @@
-﻿using Digitalis.Models;
-using MediatR;
-using Newtonsoft.Json;
+﻿using MediatR;
 
-namespace Digitalis.Features
+namespace Digitalis.Infrastructure.Mediatr
 {
     public class Request<TResponse> : IRequest<TResponse>
     {
