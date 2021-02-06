@@ -23,16 +23,10 @@ namespace Digitalis.Features
 
         public class Auth : IAuth<Command>
         {
-            private User _user;
-
             public Auth(Authenticator authenticator)
             {
-                _user = authenticator.User;
-            }
-
-            public void Authorize(Command request)
-            {
-                AuthorizationGuard.AffirmClaim(_user, AppClaims.CreateUser);
+                var user = authenticator.User;
+                AuthorizationGuard.AffirmClaim(user, AppClaims.CreateUser);
             }
         }
 

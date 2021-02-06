@@ -24,16 +24,10 @@ namespace Digitalis.Features
 
         public class Auth : IAuth<Command, string>
         {
-            private readonly User _user;
-
             public Auth(Authenticator authenticator)
             {
-                _user = authenticator.User;
-            }
-
-            public void Authorize(Command request)
-            {
-                AuthorizationGuard.AffirmClaim(_user, AppClaims.CreateNewEntry);
+                var user = authenticator.User;
+                AuthorizationGuard.AffirmClaim(user, AppClaims.CreateNewEntry);
             }
         }
 
@@ -49,11 +43,13 @@ namespace Digitalis.Features
         {
             private readonly IDocumentStore _store;
             private readonly IMailer _mailer;
+            private User _user;
 
-            public Handler(IDocumentStore store, IMailer mailer)
+            public Handler(IDocumentStore store, IMailer mailer, Authenticator auth)
             {
                 _store = store;
                 _mailer = mailer;
+                _user = auth.User;
             }
 
             public async Task<string> Handle(Command command, CancellationToken cancellationToken)

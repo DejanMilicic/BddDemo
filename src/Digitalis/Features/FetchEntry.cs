@@ -22,16 +22,10 @@ namespace Digitalis.Features
 
         public class Auth : IAuth<Query, Entry>
         {
-            private User _user;
-
             public Auth(Authenticator authenticator)
             {
-                _user = authenticator.User;
-            }
-
-            public void Authorize(Query request)
-            {
-                AuthorizationGuard.AffirmClaim(_user, AppClaims.FetchEntry);
+                var user = authenticator.User;
+                AuthorizationGuard.AffirmClaim(user, AppClaims.FetchEntry);
             }
         }
 
