@@ -76,7 +76,7 @@ namespace Digitalis
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthPipelineBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorPipelineBehavior<,>));
 
-            services.AddScoped<CurrentUser>();
+            services.AddScoped<Authenticator>();
 
             var entryAssembly = Assembly.GetAssembly(typeof(Startup));
 

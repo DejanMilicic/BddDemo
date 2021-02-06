@@ -25,7 +25,7 @@ namespace Digitalis.Features
         {
             private User _user;
 
-            public Auth(CurrentUser user)
+            public Auth(Authenticator user)
             {
                 user.Authenticate();
                 _user = user.User;

@@ -11,9 +11,9 @@ namespace Digitalis.Infrastructure.Mediatr
         where TRequest : AuthRequest<TResponse>
     {
         private readonly IEnumerable<IAuth<TRequest, TResponse>> _authorizers;
-        private CurrentUser _user;
+        private Authenticator _user;
 
-        public AuthPipelineBehavior(CurrentUser user, IEnumerable<IAuth<TRequest, TResponse>> authorizers)
+        public AuthPipelineBehavior(Authenticator user, IEnumerable<IAuth<TRequest, TResponse>> authorizers)
         {
             _authorizers = authorizers;
             _user = user;

@@ -7,7 +7,7 @@ using Raven.Client.Documents;
 
 namespace Digitalis.Infrastructure.Services
 {
-    public class CurrentUser
+    public class Authenticator
     {
         public User User { get; private set; }
 
@@ -15,7 +15,7 @@ namespace Digitalis.Infrastructure.Services
         private readonly IDocumentStore _store;
         private string _email;
 
-        public CurrentUser(IHttpContextAccessor ctx, IDocumentStore store)
+        public Authenticator(IHttpContextAccessor ctx, IDocumentStore store)
         {
             _ctx = ctx;
             _store = store;
