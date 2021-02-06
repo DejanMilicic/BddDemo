@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using Digitalis.Infrastructure;
@@ -9,20 +8,20 @@ using Digitalis.Infrastructure.Services;
 using Digitalis.Models;
 using Digitalis.Services;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Raven.Client.Documents;
 
 namespace Digitalis.Features
 {
     public class CreateUser
     {
-        public class Command : AuthRequest<string>
+        public class Command : AuthRequest
         {
             public string Email { get; set; }
+
             public Dictionary<string, string> Claims { get; set; }
         }
 
-        public class Auth : IAuth<Command, string>
+        public class Auth : IAuth<Command>
         {
             private User _user;
 
@@ -38,7 +37,7 @@ namespace Digitalis.Features
             }
         }
 
-        public class Handler : IRequestHandler<Command, string>
+        public class Handler : AsyncRequestHandler<Command>
         {
             private readonly IDocumentStore _store;
             private readonly IMailer _mailer;
@@ -49,22 +48,20 @@ namespace Digitalis.Features
                 _mailer = mailer;
             }
 
-            public async Task<string> Handle(Command command, CancellationToken cancellationToken)
+            protected override async Task Handle(Command command, CancellationToken cancellationToken)
             {
                 User user = new User();
                 user.Email = command.Email;
                 user.Claims = new List<(string, string)>
-                {
-                    (AppClaims.CreateNewEntry, "")
-                };
+                    {
+                        (AppClaims.CreateNewEntry, "")
+                    };
 
                 using var session = _store.OpenAsyncSession();
                 await session.StoreAsync(user, cancellationToken);
                 await session.SaveChangesAsync(cancellationToken);
 
                 _mailer.SendMail("admin@site.com", "New user created", "Email body...");
-
-                return user.Id;
             }
         }
     }

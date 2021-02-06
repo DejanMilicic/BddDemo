@@ -9,4 +9,12 @@ namespace Digitalis.Infrastructure.Mediatr
 
         }
     }
+
+    public class AuthRequest : IRequest
+    {
+        public virtual void Authorize()
+        {
+
+        }
+    }
 }
