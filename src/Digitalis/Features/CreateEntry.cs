@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Digitalis.Infrastructure;
 using Digitalis.Infrastructure.Guards;
 using Digitalis.Infrastructure.Mediatr;
+using Digitalis.Infrastructure.Services;
 using Digitalis.Models;
 using Digitalis.Services;
 using FluentValidation;
@@ -16,17 +17,24 @@ namespace Digitalis.Features
 {
     public class CreateEntry
     {
-        public record Command(string[] Tags) : IRequest<string>;
-
-        public class Auth : Auth<Command>
+        public class Command : Request<string>
         {
-            public Auth(IHttpContextAccessor ctx, IDocumentStore store) : base(ctx, store)
+            public string[] Tags { get; set; }
+        }
+
+        public class Auth : IAuth<Command, string>
+        {
+            private User _user;
+
+            public Auth(CurrentUser user)
             {
+                user.Authenticate();
+                _user = user.User;
             }
 
-            public override void Authorize(Command request)
+            public void Authorize(Command request)
             {
-                AuthorizationGuard.AffirmClaim(User, AppClaims.CreateNewEntry);
+                AuthorizationGuard.AffirmClaim(_user, AppClaims.CreateNewEntry);
             }
         }
 
