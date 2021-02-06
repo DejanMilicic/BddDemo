@@ -10,7 +10,7 @@ using Digitalis.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Raven.Client.Documents.Session;
+using Raven.Client.Documents;
 
 namespace Digitalis.Features
 {
@@ -20,7 +20,7 @@ namespace Digitalis.Features
 
         public class Auth : Auth<Command>
         {
-            public Auth(IHttpContextAccessor ctx, IDocumentSession session) : base(ctx, session)
+            public Auth(IHttpContextAccessor ctx, IDocumentStore store) : base(ctx, store)
             {
             }
 
@@ -40,24 +40,26 @@ namespace Digitalis.Features
 
         public class Handler : IRequestHandler<Command, string>
         {
-            private readonly IAsyncDocumentSession _session;
+            private readonly IDocumentStore _store;
             private readonly IMailer _mailer;
 
-            public Handler(IAsyncDocumentSession session, IMailer mailer)
+            public Handler(IDocumentStore store, IMailer mailer)
             {
-                _session = session;
+                _store = store;
                 _mailer = mailer;
             }
 
             public async Task<string> Handle(Command command, CancellationToken cancellationToken)
             {
+                using var session = _store.OpenAsyncSession();
+
                 Entry entry = new Entry
                 {
                     Tags = command.Tags.ToList()
                 };
 
-                await _session.StoreAsync(entry, cancellationToken);
-                await _session.SaveChangesAsync(cancellationToken);
+                await session.StoreAsync(entry, cancellationToken);
+                await session.SaveChangesAsync(cancellationToken);
 
                 _mailer.SendMail("admin@site.com", "New entry created", String.Join(", ", entry.Tags));
 
