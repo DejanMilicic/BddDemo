@@ -9,6 +9,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Raven.Client.Documents;
+using Raven.Client.Documents.Session;
 
 namespace Digitalis.Features
 {
@@ -47,7 +48,7 @@ namespace Digitalis.Features
 
             public async Task<Entry> Handle(Query query, CancellationToken cancellationToken)
             {
-                using var session = _store.OpenAsyncSession();
+                using var session = _store.OpenAsyncSession(new SessionOptions{ NoTracking = true });
                 Entry entry = await session.LoadAsync<Entry>(query.id, cancellationToken);
 
                 if (entry == null)
