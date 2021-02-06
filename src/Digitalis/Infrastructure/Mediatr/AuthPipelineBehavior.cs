@@ -8,7 +8,7 @@ using MediatR;
 namespace Digitalis.Infrastructure.Mediatr
 {
     public class AuthPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-        where TRequest : Request<TResponse>
+        where TRequest : AuthRequest<TResponse>
     {
         private readonly IEnumerable<IAuth<TRequest, TResponse>> _authorizers;
         private CurrentUser _user;
@@ -21,7 +21,7 @@ namespace Digitalis.Infrastructure.Mediatr
 
         public Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
         {
-            if (request is Request<TResponse> authRequest)
+            if (request is AuthRequest<TResponse> authRequest)
             {
                 _user.Authenticate();
                 foreach (IAuth<TRequest, TResponse> authorizer in _authorizers)

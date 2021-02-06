@@ -17,7 +17,7 @@ namespace Digitalis.Features
 {
     public class CreateEntry
     {
-        public class Command : Request<string>
+        public class Command : AuthRequest<string>
         {
             public string[] Tags { get; set; }
         }

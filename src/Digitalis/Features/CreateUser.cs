@@ -16,7 +16,7 @@ namespace Digitalis.Features
 {
     public class CreateUser
     {
-        public class Command : Request<string>
+        public class Command : AuthRequest<string>
         {
             public string Email { get; set; }
             public Dictionary<string, string> Claims { get; set; }

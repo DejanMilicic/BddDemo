@@ -15,7 +15,7 @@ namespace Digitalis.Features
 {
     public class FetchEntry
     {
-        public class Query : Request<Entry>
+        public class Query : AuthRequest<Entry>
         {
             public string Id { get; set; }
         }

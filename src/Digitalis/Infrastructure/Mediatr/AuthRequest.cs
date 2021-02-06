@@ -2,7 +2,7 @@
 
 namespace Digitalis.Infrastructure.Mediatr
 {
-    public class Request<TResponse> : IRequest<TResponse>
+    public class AuthRequest<TResponse> : IRequest<TResponse>
     {
         public virtual void Authorize()
         {
