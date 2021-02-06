@@ -4,27 +4,34 @@ using System.Threading.Tasks;
 using Digitalis.Infrastructure;
 using Digitalis.Infrastructure.Guards;
 using Digitalis.Infrastructure.Mediatr;
+using Digitalis.Infrastructure.Services;
 using Digitalis.Models;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Raven.Client.Documents.Session;
 
 namespace Digitalis.Features
 {
     public class AnonFetchEntry
     {
-        public record Query(string id) : IRequest<Entry>;
-
-        public class Auth : Auth<Query>
+        public class Query : Request<Entry>
         {
-            public Auth(IHttpContextAccessor ctx, IDocumentSession session) : base(ctx, session)
+            public string Id { get; set; }
+        }
+
+        public class Auth : IAuth<Query, Entry>
+        {
+            private User _user;
+
+            public Auth(CurrentUser user)
             {
+                user.Authenticate();
+                _user = user.User;
             }
 
-            public override void Authorize(Query request)
+            public void Authorize(Query request)
             {
-                AuthorizationGuard.AffirmClaim(User, AppClaims.FetchEntry);
+                AuthorizationGuard.AffirmClaim(_user, AppClaims.FetchEntry);
             }
         }
 
@@ -32,7 +39,7 @@ namespace Digitalis.Features
         {
             public Validator()
             {
-                RuleFor(x => x.id).NotEmpty();
+                RuleFor(x => x.Id).NotEmpty();
             }
         }
 
@@ -47,7 +54,7 @@ namespace Digitalis.Features
 
             public async Task<Entry> Handle(Query query, CancellationToken cancellationToken)
             {
-                Entry entry = await _session.LoadAsync<Entry>(query.id, cancellationToken);
+                Entry entry = await _session.LoadAsync<Entry>(query.Id, cancellationToken);
 
                 if (entry == null)
                     throw new KeyNotFoundException();

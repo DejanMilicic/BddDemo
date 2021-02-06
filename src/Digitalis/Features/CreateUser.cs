@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using Digitalis.Infrastructure;
 using Digitalis.Infrastructure.Guards;
 using Digitalis.Infrastructure.Mediatr;
+using Digitalis.Infrastructure.Services;
 using Digitalis.Models;
 using Digitalis.Services;
 using MediatR;
@@ -14,17 +16,25 @@ namespace Digitalis.Features
 {
     public class CreateUser
     {
-        public record Command(string email/*, Dictionary<string, string> Claims*/) : IRequest<string>;
-
-        public class Auth : Auth<Command>
+        public class Command : Request<string>
         {
-            public Auth(IHttpContextAccessor ctx, IDocumentStore store) : base(ctx, store)
+            public string Email { get; set; }
+            public Dictionary<string, string> Claims { get; set; }
+        }
+
+        public class Auth : IAuth<Command, string>
+        {
+            private User _user;
+
+            public Auth(CurrentUser user)
             {
+                user.Authenticate();
+                _user = user.User;
             }
 
-            public override void Authorize(Command request)
+            public void Authorize(Command request)
             {
-                AuthorizationGuard.AffirmClaim(User, AppClaims.CreateUser);
+                AuthorizationGuard.AffirmClaim(_user, AppClaims.CreateUser);
             }
         }
 
@@ -42,7 +52,7 @@ namespace Digitalis.Features
             public async Task<string> Handle(Command command, CancellationToken cancellationToken)
             {
                 User user = new User();
-                user.Email = command.email;
+                user.Email = command.Email;
                 user.Claims = new List<(string, string)>
                 {
                     (AppClaims.CreateNewEntry, "")
