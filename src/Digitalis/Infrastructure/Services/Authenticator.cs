@@ -46,7 +46,7 @@ namespace Digitalis.Infrastructure.Services
             if (user == null)
             {
                 user = new User { Email = _email };
-                session.Store(User);
+                session.Store(user);
                 session.SaveChanges();
             }
 
