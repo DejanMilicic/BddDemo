@@ -5,6 +5,7 @@ using Digitalis.Infrastructure.Mediatr;
 using Digitalis.Models;
 using FluentValidation;
 using MediatR;
+using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
 
 namespace Digitalis.Features
@@ -26,16 +27,17 @@ namespace Digitalis.Features
 
         public class Handler : IRequestHandler<Query, Entry>
         {
-            private readonly IAsyncDocumentSession _session;
+            private readonly IDocumentStore _store;
 
-            public Handler(IAsyncDocumentSession session)
+            public Handler(IDocumentStore store)
             {
-                _session = session;
+                _store = store;
             }
 
             public async Task<Entry> Handle(Query query, CancellationToken cancellationToken)
             {
-                Entry entry = await _session.LoadAsync<Entry>(query.Id, cancellationToken);
+                using var session = _store.OpenAsyncSession(new SessionOptions { NoTracking = true });
+                Entry entry = await session.LoadAsync<Entry>(query.Id, cancellationToken);
 
                 if (entry == null)
                     throw new KeyNotFoundException();
