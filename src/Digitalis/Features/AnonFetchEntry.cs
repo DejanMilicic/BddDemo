@@ -1,32 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Digitalis.Infrastructure;
-using Digitalis.Infrastructure.Guards;
 using Digitalis.Infrastructure.Mediatr;
-using Digitalis.Infrastructure.Services;
 using Digitalis.Models;
 using FluentValidation;
 using MediatR;
-using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
 
 namespace Digitalis.Features
 {
-    public class FetchEntry
+    public class AnonFetchEntry
     {
-        public class Query : AuthRequest<Entry>
+        public class Query : AnonRequest<Entry>
         {
             public string Id { get; set; }
-        }
-
-        public class Auth : IAuth<Query, Entry>
-        {
-            public Auth(Authenticator authenticator)
-            {
-                var user = authenticator.User;
-                AuthorizationGuard.AffirmClaim(user, AppClaims.FetchEntry);
-            }
         }
 
         public class Validator : AbstractValidator<Query>
@@ -39,17 +26,16 @@ namespace Digitalis.Features
 
         public class Handler : IRequestHandler<Query, Entry>
         {
-            private readonly IDocumentStore _store;
+            private readonly IAsyncDocumentSession _session;
 
-            public Handler(IDocumentStore store)
+            public Handler(IAsyncDocumentSession session)
             {
-                _store = store;
+                _session = session;
             }
 
             public async Task<Entry> Handle(Query query, CancellationToken cancellationToken)
             {
-                using var session = _store.OpenAsyncSession(new SessionOptions{ NoTracking = true });
-                Entry entry = await session.LoadAsync<Entry>(query.Id, cancellationToken);
+                Entry entry = await _session.LoadAsync<Entry>(query.Id, cancellationToken);
 
                 if (entry == null)
                     throw new KeyNotFoundException();

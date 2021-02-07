@@ -39,7 +39,7 @@ namespace Specs.Features.FetchEntryById
 
             var readerClient = Client();
 
-            _newEntry = new CreateEntry.Command(new[] { "tag1", "tag2", "tag3" });
+            _newEntry = new CreateEntry.Command{ Tags = new[] { "tag1", "tag2", "tag3" }};
 
             _response = creatorClient.PostAsync("/entry",
                 Serialize(_newEntry)).Result;

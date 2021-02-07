@@ -16,6 +16,6 @@ namespace Digitalis.Controllers
         }
 
         [HttpPost("user")]
-        public async Task<string> Post([FromBody] CreateUser.Command command) => await _mediator.Send(command);
+        public async Task<string> Post([FromBody] CreateUser.Command command) => await Task.FromResult(_mediator.Send(command).ToString());
     }
 }

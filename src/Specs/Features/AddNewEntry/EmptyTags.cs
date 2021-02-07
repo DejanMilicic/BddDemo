@@ -39,7 +39,7 @@ namespace Specs.Features.AddNewEntry
                 { "email", user.Email }
             });
 
-            _newEntry = new CreateEntry.Command(new string[] { });
+            _newEntry = new CreateEntry.Command { Tags = new string[] { }};
 
             _response = client.PostAsync("/entry",
                 Serialize(_newEntry)).Result;

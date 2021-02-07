@@ -5,28 +5,29 @@ using System.Threading.Tasks;
 using Digitalis.Infrastructure;
 using Digitalis.Infrastructure.Guards;
 using Digitalis.Infrastructure.Mediatr;
+using Digitalis.Infrastructure.Services;
 using Digitalis.Models;
 using Digitalis.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Raven.Client.Documents.Session;
+using Raven.Client.Documents;
 
 namespace Digitalis.Features
 {
     public class CreateEntry
     {
-        public record Command(string[] Tags) : IRequest<string>;
-
-        public class Auth : Auth<Command>
+        public class Command : AuthRequest<string>
         {
-            public Auth(IHttpContextAccessor ctx, IDocumentSession session) : base(ctx, session)
-            {
-            }
+            public string[] Tags { get; set; }
+        }
 
-            public override void Authorize(Command request)
+        public class Auth : IAuth<Command, string>
+        {
+            public Auth(Authenticator authenticator)
             {
-                AuthorizationGuard.AffirmClaim(User, AppClaims.CreateNewEntry);
+                var user = authenticator.User;
+                AuthorizationGuard.AffirmClaim(user, AppClaims.CreateNewEntry);
             }
         }
 
@@ -40,24 +41,28 @@ namespace Digitalis.Features
 
         public class Handler : IRequestHandler<Command, string>
         {
-            private readonly IAsyncDocumentSession _session;
+            private readonly IDocumentStore _store;
             private readonly IMailer _mailer;
+            private User _user;
 
-            public Handler(IAsyncDocumentSession session, IMailer mailer)
+            public Handler(IDocumentStore store, IMailer mailer, Authenticator auth)
             {
-                _session = session;
+                _store = store;
                 _mailer = mailer;
+                _user = auth.User;
             }
 
             public async Task<string> Handle(Command command, CancellationToken cancellationToken)
             {
+                using var session = _store.OpenAsyncSession();
+
                 Entry entry = new Entry
                 {
                     Tags = command.Tags.ToList()
                 };
 
-                await _session.StoreAsync(entry, cancellationToken);
-                await _session.SaveChangesAsync(cancellationToken);
+                await session.StoreAsync(entry, cancellationToken);
+                await session.SaveChangesAsync(cancellationToken);
 
                 _mailer.SendMail("admin@site.com", "New entry created", String.Join(", ", entry.Tags));
 

@@ -5,7 +5,11 @@
 
 ----
 
-To get Google "client_id":
+Digitalis: Opinionated best-practices application
+
+----
+
+To get Google "client_id" for testing API:
 
 1. https://developers.google.com/oauthplayground/
 2. Find "Google OAuth2 API v2" and expand
@@ -15,3 +19,9 @@ To get Google "client_id":
 6. Click on "Exchange authorization code for tokens" button
 7. You will get URL that contains "client_id" as a query parameter
 8. Below it, JSON contains "id_token" that you can use as a Bearer token
+
+---
+
+To register your application with Google API  
+
+https://console.developers.google.com/apis
