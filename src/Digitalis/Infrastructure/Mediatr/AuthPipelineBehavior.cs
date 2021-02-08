@@ -11,6 +11,7 @@ namespace Digitalis.Infrastructure.Mediatr
     {
         public AuthPipelineBehavior(Authenticator authenticator, IEnumerable<IAuth<TRequest, TResponse>> authorizers)
         {
+            _ = authenticator.User;
         }
 
         public Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
