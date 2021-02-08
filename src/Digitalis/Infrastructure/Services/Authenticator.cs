@@ -10,23 +10,18 @@ namespace Digitalis.Infrastructure.Services
 {
     public class Authenticator
     {
-        private Lazy<User> _user;
-
-        public User User => _user.Value;
+        public User User => new Lazy<User>(AuthenticateUser).Value;
 
         private readonly IHttpContextAccessor _ctx;
         private readonly IDocumentStore _store;
-        private string _email;
 
         public Authenticator(IHttpContextAccessor ctx, IDocumentStore store)
         {
             _ctx = ctx;
             _store = store;
-
-            _user = new Lazy<User>(new Func<User>(() => AuthenticateUser()));
         }
 
-        public User AuthenticateUser()
+        private User AuthenticateUser()
         {
             AuthenticationGuard.AgainstNull(_ctx.HttpContext?.User?.Identity);
             AuthenticationGuard.Affirm(_ctx.HttpContext?.User.Identity.IsAuthenticated);
@@ -38,14 +33,14 @@ namespace Digitalis.Infrastructure.Services
                                 ?? ci.Claims.SingleOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress");
             AuthenticationGuard.AgainstNull(emailClaim);
 
-            _email = emailClaim.Value;
-            AuthenticationGuard.AgainstNullOrEmpty(_email);
+            string email = emailClaim.Value;
+            AuthenticationGuard.AgainstNullOrEmpty(email);
 
             using var session = _store.OpenSession();
-            User user = session.Query<User>().SingleOrDefault(x => x.Email == _email);
+            User user = session.Query<User>().SingleOrDefault(x => x.Email == email);
             if (user == null)
             {
-                user = new User { Email = _email };
+                user = new User { Email = email };
                 session.Store(user);
                 session.SaveChanges();
             }
