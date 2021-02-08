@@ -10,15 +10,18 @@ namespace Digitalis.Infrastructure.Services
 {
     public class Authenticator
     {
-        public User User => new Lazy<User>(AuthenticateUser).Value;
+        public User User => _user.Value;
 
         private readonly IHttpContextAccessor _ctx;
         private readonly IDocumentStore _store;
+        private readonly Lazy<User> _user;
 
         public Authenticator(IHttpContextAccessor ctx, IDocumentStore store)
         {
             _ctx = ctx;
             _store = store;
+
+            _user ??= new Lazy<User>(AuthenticateUser);
         }
 
         private User AuthenticateUser()
