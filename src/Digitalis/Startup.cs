@@ -84,6 +84,7 @@ namespace Digitalis
                 x =>
                 {
                     x.FromAssemblies(entryAssembly)
+                        .AddClasses(classes => classes.AssignableTo(typeof(IAuth<>)))
                         .AddClasses(classes => classes.AssignableTo(typeof(IAuth<,>)))
                         .AsImplementedInterfaces()
                         .WithScopedLifetime();
