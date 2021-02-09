@@ -17,7 +17,6 @@ using System.Reflection;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using Digitalis.Infrastructure.Mediatr;
-using Digitalis.Infrastructure.OpenApi;
 using Digitalis.Infrastructure.Services;
 using Digitalis.Services;
 using FluentValidation;
@@ -105,7 +104,6 @@ namespace Digitalis
 
             services.AddSwaggerDocument(settings =>
             {
-                settings.SchemaNameGenerator = new CustomSchemaNameGenerator();
                 settings.Title = App.Title;
             });
 
