@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Digitalis.Infrastructure.Mediatr
 {
-    public class AuthPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    internal class AuthPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
         where TRequest : AuthRequest<TResponse>
     {
         public AuthPipelineBehavior(Authenticator authenticator, IEnumerable<IAuth<TRequest, TResponse>> authorizers)

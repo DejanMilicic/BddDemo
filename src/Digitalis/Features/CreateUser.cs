@@ -21,7 +21,7 @@ namespace Digitalis.Features
             public Dictionary<string, string> Claims { get; set; }
         }
 
-        public class Auth : IAuth<Command>
+        internal class Auth : IAuth<Command>
         {
             public Auth(Authenticator authenticator)
             {
@@ -30,7 +30,7 @@ namespace Digitalis.Features
             }
         }
 
-        public class Handler : AsyncRequestHandler<Command>
+        internal class Handler : AsyncRequestHandler<Command>
         {
             private readonly IDocumentStore _store;
             private readonly IMailer _mailer;

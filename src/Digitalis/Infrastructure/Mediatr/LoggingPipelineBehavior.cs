@@ -11,7 +11,7 @@ using Serilog;
 
 namespace Digitalis.Infrastructure.Mediatr
 {
-    public class LoggingPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    internal class LoggingPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     {
         private readonly IHttpContextAccessor _ctx;
 

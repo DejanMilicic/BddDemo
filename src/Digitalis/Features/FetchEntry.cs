@@ -20,7 +20,7 @@ namespace Digitalis.Features
             public string Id { get; set; }
         }
 
-        public class Auth : IAuth<Query, Entry>
+        internal class Auth : IAuth<Query, Entry>
         {
             public Auth(Authenticator authenticator)
             {
@@ -29,7 +29,7 @@ namespace Digitalis.Features
             }
         }
 
-        public class Validator : AbstractValidator<Query>
+        internal class Validator : AbstractValidator<Query>
         {
             public Validator()
             {
@@ -37,7 +37,7 @@ namespace Digitalis.Features
             }
         }
 
-        public class Handler : IRequestHandler<Query, Entry>
+        internal class Handler : IRequestHandler<Query, Entry>
         {
             private readonly IDocumentStore _store;
 

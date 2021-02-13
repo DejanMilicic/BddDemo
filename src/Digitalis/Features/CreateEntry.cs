@@ -22,7 +22,7 @@ namespace Digitalis.Features
             public string[] Tags { get; set; }
         }
 
-        public class Auth : IAuth<Command, string>
+        internal class Auth : IAuth<Command, string>
         {
             public Auth(Authenticator authenticator)
             {
@@ -31,7 +31,7 @@ namespace Digitalis.Features
             }
         }
 
-        public class Validator : AbstractValidator<Command>
+        internal class Validator : AbstractValidator<Command>
         {
             public Validator()
             {
@@ -39,7 +39,7 @@ namespace Digitalis.Features
             }
         }
 
-        public class Handler : IRequestHandler<Command, string>
+        internal class Handler : IRequestHandler<Command, string>
         {
             private readonly IDocumentStore _store;
             private readonly IMailer _mailer;

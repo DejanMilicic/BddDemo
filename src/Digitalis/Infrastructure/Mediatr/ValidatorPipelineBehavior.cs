@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 
 namespace Digitalis.Infrastructure.Mediatr
 {
-    public class ValidatorPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    internal class ValidatorPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     {
         private readonly IEnumerable<IValidator<TRequest>> _validators;
 

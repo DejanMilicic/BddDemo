@@ -8,7 +8,7 @@ using Raven.Client.Documents;
 
 namespace Digitalis.Infrastructure.Services
 {
-    public class Authenticator
+    internal class Authenticator
     {
         public User User => _user.Value;
 

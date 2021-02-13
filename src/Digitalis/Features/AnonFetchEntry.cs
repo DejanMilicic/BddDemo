@@ -17,7 +17,7 @@ namespace Digitalis.Features
             public string Id { get; set; }
         }
 
-        public class Validator : AbstractValidator<Query>
+        internal class Validator : AbstractValidator<Query>
         {
             public Validator()
             {
@@ -25,7 +25,7 @@ namespace Digitalis.Features
             }
         }
 
-        public class Handler : IRequestHandler<Query, Entry>
+        internal class Handler : IRequestHandler<Query, Entry>
         {
             private readonly IDocumentStore _store;
 
