@@ -32,6 +32,16 @@ namespace Specs.Infrastructure
         protected readonly IMailer Mailer;
         protected readonly TestServer TestServer;
 
+        static Fixture()
+        {
+            var testServerOptions = new TestServerOptions
+            {
+                FrameworkVersion = null // user latest, optional
+            };
+
+            ConfigureServer(testServerOptions);
+        }x
+
         public Fixture()
         {
             Mailer = A.Fake<IMailer>();
