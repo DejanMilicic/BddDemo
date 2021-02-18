@@ -40,7 +40,7 @@ namespace Specs.Infrastructure
             };
 
             ConfigureServer(testServerOptions);
-        }x
+        }
 
         public Fixture()
         {
