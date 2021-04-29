@@ -15,7 +15,9 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Reflection;
 using System.Security.Authentication;
+using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
+using Bogus.DataSets;
 using Digitalis.Infrastructure.Mediatr;
 using Digitalis.Infrastructure.Services;
 using Digitalis.Services;
@@ -47,7 +49,7 @@ namespace Digitalis
             services.AddHealthChecks();
             services.AddControllers();
 
-            services.AddSingleton<IDocumentStore>(_ =>
+            services.AddSingleton<IDocumentStore>(ctx =>
             {
                 var dbConfig = Configuration.GetSection("Database").Get<Settings.DatabaseSettings>();
 
@@ -59,6 +61,18 @@ namespace Digitalis
 
                 if (!string.IsNullOrWhiteSpace(dbConfig.CertPath))
                     store.Certificate = new X509Certificate2(dbConfig.CertPath, dbConfig.CertPass);
+
+                var http = ctx.GetRequiredService<IHttpContextAccessor>();
+
+                store.OnBeforeStore += (sender, e) =>
+                {
+                    var identity = http.HttpContext?.User.Identity;
+                    if (identity == null) return;
+
+                    if (e.Session.GetChangeVectorFor(e.Entity) == null)
+                        e.DocumentMetadata["Created-By"] = identity.Name;
+                    e.DocumentMetadata["Modified-By"] = identity.Name;
+                };
 
                 store.Initialize();
 
