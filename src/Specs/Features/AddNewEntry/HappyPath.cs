@@ -29,7 +29,7 @@ namespace Specs.Features.AddNewEntry
             };            
             
             using var session = Store.OpenSession();
-            session.Store(user );
+            session.Store(user);
             session.SaveChanges();
 
             var client = AuthClient(new Dictionary<string, string>
@@ -113,6 +113,18 @@ namespace Specs.Features.AddNewEntry
                             A<string>.That.Matches(x => _newEntry.Tags.All(x.Contains))))
                         .MustHaveHappenedOnceExactly();
             }
+        }
+
+        [Fact(DisplayName = "8. Expected number of sessions and requests")]
+        public void NumberOfSessionsAndRequests()
+        {
+            SessionsRecorded.Count.Should().Be(3); // three sessions opened
+
+            var requests = SessionsRecorded.Values.Select(x => x).ToList();
+
+            requests[0].Should().Be(1); // authorization of request
+            requests[1].Should().Be(1); // operation
+            requests[2].Should().Be(1); // logging
         }
     }
 }

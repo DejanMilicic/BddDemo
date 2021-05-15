@@ -31,6 +31,7 @@ namespace Specs.Infrastructure
         protected readonly IDocumentStore Store;
         protected readonly IMailer Mailer;
         protected readonly TestServer TestServer;
+        protected Dictionary<string, int> SessionsRecorded;
 
         static Fixture()
         {
@@ -48,6 +49,22 @@ namespace Specs.Infrastructure
 
             Store = this.GetDocumentStore();
             IndexCreation.CreateIndexes(typeof(Startup).Assembly, Store);
+
+            var session = Store.OpenSession();
+
+            SessionsRecorded = new Dictionary<string, int>();
+
+            Store.OnSessionDisposing += (sender, args) =>
+            {
+                string sessionId = args.Session.Id.ToString();
+
+                if (SessionsRecorded.ContainsKey(sessionId))
+                    SessionsRecorded[sessionId] = args.Session.NumberOfRequests;
+                else
+                    SessionsRecorded.Add(sessionId, args.Session.NumberOfRequests);
+            };
+
+            SessionsRecorded = new Dictionary<string, int>();
 
             TestServer = SetupHost().GetTestServer();
         }
