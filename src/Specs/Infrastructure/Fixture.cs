@@ -64,8 +64,6 @@ namespace Specs.Infrastructure
                     SessionsRecorded.Add(sessionId, args.Session.NumberOfRequests);
             };
 
-            SessionsRecorded = new Dictionary<string, int>();
-
             TestServer = SetupHost().GetTestServer();
         }
 
