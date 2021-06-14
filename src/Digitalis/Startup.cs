@@ -74,6 +74,18 @@ namespace Digitalis
                     e.DocumentMetadata["Modified-By"] = identity.Name;
                 };
 
+                store.OnSessionCreated += (sender, args) =>
+                {
+                    // args.Session
+                    /* track session creation */
+                };
+
+                store.OnSessionDisposing += (sender, args) =>
+                {
+                    // args.Session
+                    /* track session disposal */
+                };
+
                 store.Initialize();
 
                 IndexCreation.CreateIndexes(typeof(Startup).Assembly, store);
