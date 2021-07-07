@@ -98,7 +98,8 @@ namespace Digitalis
 
             services.AddMediatR(typeof(Startup));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingPipelineBehavior<,>));
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthPipelineBehavior<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthPipelineQueryBehavior<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthPipelineCommandBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorPipelineBehavior<,>));
 
             services.AddScoped<Authenticator>();
