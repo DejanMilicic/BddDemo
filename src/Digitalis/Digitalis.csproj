@@ -16,7 +16,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.3" />
     <PackageReference Include="NSwag.AspNetCore" Version="13.10.2" />
     <PackageReference Include="NUlid" Version="1.5.0" />
-    <PackageReference Include="RavenDB.Client" Version="5.2.0-nightly-20210515-0721" />
+    <PackageReference Include="RavenDB.Client" Version="5.2.1" />
     <PackageReference Include="Scrutor" Version="3.3.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
     <PackageReference Include="Serilog.Sinks.RavenDB" Version="3.0.0" />
