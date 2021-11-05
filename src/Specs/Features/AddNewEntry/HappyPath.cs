@@ -10,29 +10,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using Digitalis.Infrastructure;
-using Xunit;
+//using Xunit;
 
 namespace Specs.Features.AddNewEntry
 {
-    [Trait("Add New Entry", "Happy Path")]
-    public class HappyPath : Fixture
+    //[Trait("Add New Entry", "Happy Path")]
+    public class HappyPathTests //: Fixture
     {
         private readonly HttpResponseMessage _response;
         private readonly CreateEntry.Command _newEntry;
+        private Fixture _fixture;
 
-        public HappyPath()
+        public HappyPathTests()
         {
+            _fixture = new Fixture();
+
             User user = new User
             {
                 Email = "admin@app.com",
                 Claims = new List<(string, string)> { (AppClaims.CreateNewEntry, "") }
             };            
             
-            using var session = Store.OpenSession();
+            using var session = _fixture.Store.OpenSession();
             session.Store(user);
             session.SaveChanges();
 
-            var client = AuthClient(new Dictionary<string, string>
+            var client = _fixture.AuthClient(new Dictionary<string, string>
                 {
                     { "email", user.Email }
                 });
@@ -40,38 +43,38 @@ namespace Specs.Features.AddNewEntry
             _newEntry = new CreateEntry.Command{ Tags = new[] { "tag1", "tag2", "tag3" }};
 
             _response = client.PostAsync("/entry",
-                Serialize(_newEntry)).Result;
+                _fixture.Serialize(_newEntry)).Result;
 
-            WaitForIndexing(Store);
-            WaitForUserToContinueTheTest(Store);
+            //WaitForIndexing(Store);
+            //WaitForUserToContinueTheTest(Store);
         }
 
-        [Fact(DisplayName = "1. Status 200 is returned")]
+        //[Fact(DisplayName = "1. Status 200 is returned")]
         public void StatusReturned()
         {
             _response.StatusCode.Should().Be(200);
         }
 
-        [Fact(DisplayName = "2. One entry is created in the database")]
+        //[Fact(DisplayName = "2. One entry is created in the database")]
         public void OneEntryCreated()
         {
-            Store.OpenSession().Query<Entry>().Statistics(out QueryStatistics stats).ToList();
+            _fixture.Store.OpenSession().Query<Entry>().Statistics(out QueryStatistics stats).ToList();
 
             stats.TotalResults.Should().Be(1);
         }
 
-        [Fact(DisplayName = "3. New entry has expected content")]
+        //[Fact(DisplayName = "3. New entry has expected content")]
         public void ExpectedContent()
         {
-            var entry = Store.OpenSession().Query<Entry>().Single();
+            var entry = _fixture.Store.OpenSession().Query<Entry>().Single();
 
             entry.Tags.Should().BeEquivalentTo(_newEntry.Tags);
         }
 
-        [Fact(DisplayName = "4. One email is sent")]
+        //[Fact(DisplayName = "4. One email is sent")]
         public void OneEmailSent()
         {
-            A.CallTo(() => Mailer
+            A.CallTo(() => _fixture.Mailer
                     .SendMail(
                         A<string>.Ignored,
                         A<string>.Ignored,
@@ -79,10 +82,10 @@ namespace Specs.Features.AddNewEntry
                     .MustHaveHappenedOnceExactly();
         }
 
-        [Fact(DisplayName = "5. Email is addressed to admin")]
+        //[Fact(DisplayName = "5. Email is addressed to admin")]
         public void EmailAddressedToAdmin()
         {
-            A.CallTo(() => Mailer
+            A.CallTo(() => _fixture.Mailer
                     .SendMail(
                         A<string>.That.Matches(x => x == "admin@site.com"),
                         A<string>.Ignored,
@@ -90,10 +93,10 @@ namespace Specs.Features.AddNewEntry
                     .MustHaveHappenedOnceExactly();
         }
 
-        [Fact(DisplayName = "6. Email subject is correct")]
+        //[Fact(DisplayName = "6. Email subject is correct")]
         public void EmailSubjectIsCorrect()
         {
-            A.CallTo(() => Mailer
+            A.CallTo(() => _fixture.Mailer
                     .SendMail(
                         A<string>.Ignored,
                         A<string>.That.Matches(x => x == "New entry created"),
@@ -101,12 +104,12 @@ namespace Specs.Features.AddNewEntry
                     .MustHaveHappenedOnceExactly();
         }
 
-        [Fact(DisplayName = "7. Email body contains all tags")]
+        //[Fact(DisplayName = "7. Email body contains all tags")]
         public void EmailBodyContainsAllTags()
         {
             foreach (string tag in _newEntry.Tags)
             {
-                A.CallTo(() => Mailer
+                A.CallTo(() => _fixture.Mailer
                         .SendMail(
                             A<string>.Ignored,
                             A<string>.Ignored,
@@ -115,12 +118,12 @@ namespace Specs.Features.AddNewEntry
             }
         }
 
-        [Fact(DisplayName = "8. Expected number of sessions and requests")]
+        //[Fact(DisplayName = "8. Expected number of sessions and requests")]
         public void NumberOfSessionsAndRequests()
         {
-            SessionsRecorded.Count.Should().Be(3); // three sessions opened
+            _fixture.SessionsRecorded.Count.Should().Be(3); // three sessions opened
 
-            var requests = SessionsRecorded.Values.Select(x => x).ToList();
+            var requests = _fixture.SessionsRecorded.Values.Select(x => x).ToList();
 
             requests[0].Should().Be(1); // authorization of request
             requests[1].Should().Be(1); // operation

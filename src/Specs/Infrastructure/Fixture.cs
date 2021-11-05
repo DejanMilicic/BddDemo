@@ -21,17 +21,17 @@ using Raven.Client.Documents.Indexes;
 using Raven.TestDriver;
 using Serilog;
 using WebMotions.Fake.Authentication.JwtBearer;
-using Xunit;
+//using Xunit;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Specs.Infrastructure
 {
-    public class Fixture : RavenTestDriver, IClassFixture<WebApplicationFactory<Startup>>
+    public class Fixture : RavenTestDriver//, IClassFixture<WebApplicationFactory<Startup>>
     {
-        protected readonly IDocumentStore Store;
-        protected readonly IMailer Mailer;
-        protected readonly TestServer TestServer;
-        protected Dictionary<string, int> SessionsRecorded;
+        public readonly IDocumentStore Store;
+        public readonly IMailer Mailer;
+        public readonly TestServer TestServer;
+        public Dictionary<string, int> SessionsRecorded;
 
         static Fixture()
         {
