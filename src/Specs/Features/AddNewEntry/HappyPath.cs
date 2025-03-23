@@ -22,6 +22,8 @@ namespace Specs.Features.AddNewEntry
 
         public HappyPath()
         {
+            // Given
+
             User user = new User
             {
                 Email = "admin@app.com",
@@ -32,17 +34,20 @@ namespace Specs.Features.AddNewEntry
             session.Store(user);
             session.SaveChanges();
 
+            // When
+
             var client = AuthClient(new Dictionary<string, string>
                 {
                     { "email", user.Email }
                 });
 
             _newEntry = new CreateEntry.Command{ Tags = new[] { "tag1", "tag2", "tag3" }};
-
+            
             _response = client.PostAsync("/entry",
                 Serialize(_newEntry)).Result;
 
             WaitForIndexing(Store);
+
             WaitForUserToContinueTheTest(Store);
         }
 
